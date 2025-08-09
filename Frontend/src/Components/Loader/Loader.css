@@ -1,0 +1,75 @@
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  position: relative;
+}
+.dot-loader {
+  display: flex;
+  justify-content: space-between;
+  width: 60px;
+}
+.dot-loader .dot {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #333;
+  animation: bounce 0.6s infinite ease-in-out;
+}
+.dot-loader .dot:nth-child(1) {
+  animation-delay: 0s;
+}
+.dot-loader .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.dot-loader .dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: scale(0.5);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.line-loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background-color: #f3f3f3;
+  z-index: 999;
+}
+.line-loader .horizontal-line {
+  height: 8px;
+  background-color: #333;
+  animation: growShrinkHorizontal 1s ease-in-out infinite;
+}
+.line-loader .horizontal-line:nth-child(1) {
+  animation-delay: 0s;
+}
+.line-loader .horizontal-line:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.line-loader .horizontal-line:nth-child(3) {
+  animation-delay: 0.4s;
+}
+@keyframes growShrinkHorizontal {
+  0%, 100% {
+    width: 10px;
+    opacity: 0.7;
+  }
+  50% {
+    width: 50px;
+    opacity: 1;
+  }
+}

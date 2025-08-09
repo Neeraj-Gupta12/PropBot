@@ -1,0 +1,5 @@
+.env
+node_modules
+
+mern-ecommerce-2cc24-firebase-adminsdk-zge1a-825fb4ea57.json
+echo "config/mern-ecommerce-2cc24-firebase-adminsdk-zge1a-825fb4ea57.json" >> .gitignore

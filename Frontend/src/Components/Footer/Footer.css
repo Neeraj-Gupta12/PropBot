@@ -1,0 +1,264 @@
+.footer {
+  background: #1a1a1a;
+  color: #ffffff;
+  padding: 40px 0 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* New rows for custom mobile layout */
+.footer-top-row {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.footer-mid-row {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.footer-newsletter-row {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.f-col {
+  padding: 0;
+}
+
+/* Footer Logo */
+.footer-logo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.footer-logo-icon {
+  font-size: 2rem;
+  color: #408de4;
+  margin-right: 10px;
+}
+
+.footer-logo-text {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.f-col h3 {
+  color: #408de4;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.f-col h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background: #408de4;
+}
+
+.f-col p {
+  color: #cccccc;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+}
+
+.footer-contact-info p {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  color: #cccccc;
+  font-size: 0.9rem;
+}
+
+.footer-contact-info svg {
+  color: #408de4;
+  font-size: 1rem;
+  min-width: 16px;
+}
+
+.email-id {
+  color: #408de4;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.email-id:hover {
+  color: #ffffff;
+}
+
+.f-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.f-col ul li {
+  margin-bottom: 10px;
+}
+
+.f-col ul li a,.footer-service-item {
+  color: #cccccc;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.f-col ul li a:hover {
+  color: #408de4;
+  transform: translateX(5px);
+}
+
+/* Newsletter */
+.newsletter {
+  margin-top: 20px;
+}
+
+.newsletter form {
+  display: flex;
+  align-items: center;
+  background: #2a2a2a;
+  border-radius: 25px;
+  overflow: hidden;
+  border: 1px solid #333;
+}
+.newsletter form svg {
+  margin-left: 10px;
+  margin-right: 8px;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.newsletter form svg {
+  margin: 12px 10px;
+  font-size: 1rem;
+}
+
+.newsletter form input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  padding: 12px 0;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.newsletter form input::placeholder {
+  color: #888;
+}
+
+.newsletter form button {
+  background: #408de4;
+  border: none;
+  color: white;
+  padding: 12px 15px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  font-size: 1rem;
+}
+
+.newsletter form button:hover {
+  background: #2d6da3;
+}
+
+/* Social Icons */
+.social-icon {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.social-icon svg {
+  width: 35px;
+  height: 35px;
+  background: #2a2a2a;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #408de4;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #333;
+}
+
+.social-icon svg:hover {
+  background: #408de4;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Footer Bottom */
+footer hr {
+  border: none;
+  height: 1px;
+  background: #333;
+  margin: 30px auto;
+  width: 90%;
+}
+
+.footer-bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.footer-bottom p {
+  color: #888;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* Remove old underline animation */
+.underline {
+  display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .footer-top-row p {
+    font-size: 15px;
+    font-weight: 100;
+    line-height: 1.5;
+  }
+  .footer-mid-row {
+    padding: 0 5px;
+  }
+  .footer-mid-row .f-col h3{
+    font-size: 13px;
+  }
+  .footer-mid-row .f-col ul li a,.footer-service-item {
+    font-size: 10px;
+  }
+  .footer-mid-row .f-col .footer-contact-info p,h4 {
+    font-size: 10px;
+  }
+}

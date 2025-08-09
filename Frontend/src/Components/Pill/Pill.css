@@ -1,0 +1,16 @@
+.pill {
+    padding: 0.5em 1em;
+    margin: 0.2em;
+    border-radius: 20px;
+    background-color: #007bff;
+    color: white;
+    font-size: 8px;
+    position: relative;
+    cursor: pointer;
+    top: -15px;
+    transition: background-color 0.3s;
+    z-index: 1;
+
+  }
+  
+  

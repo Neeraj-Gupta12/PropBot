@@ -1,0 +1,53 @@
+/* Card Loader Animation for HomeHotels and similar components */
+.card-loader-wrapper {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 32px 0;
+}
+.card-loader {
+  width: 260px;
+  height: 320px;
+  background: linear-gradient(90deg, #f3f3f3 25%, #e0e0e0 50%, #f3f3f3 75%);
+  border-radius: 18px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  position: relative;
+  overflow: hidden;
+  animation: cardShimmer 5.2s infinite linear;
+  display: flex;
+  flex-direction: column;
+}
+.card-loader-img {
+  width: 100%;
+  height: 160px;
+  background: #e0e0e0;
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+}
+.card-loader-content {
+  flex: 1;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.card-loader-title, .card-loader-rating, .card-loader-price {
+  height: 18px;
+  background: #e0e0e0;
+  border-radius: 6px;
+}
+.card-loader-title {
+  width: 70%;
+}
+.card-loader-rating {
+  width: 40%;
+}
+.card-loader-price {
+  width: 50%;
+}
+@keyframes cardShimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
