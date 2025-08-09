@@ -1,0 +1,70 @@
+.compare-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  z-index: 1000;
+}
+.compare-bar-list {
+  display: flex;
+  gap: 16px;
+}
+.compare-bar-item {
+  display: flex;
+  align-items: center;
+  background: #f5f5f5;
+  border-radius: 6px;
+  padding: 4px 8px;
+  position: relative;
+}
+.compare-bar-img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+.compare-bar-title {
+  font-size: 14px;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.compare-bar-remove {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  font-size: 18px;
+  margin-left: 8px;
+  cursor: pointer;
+}
+.compare-bar-btn {
+  background: #408de4;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 20px;
+  font-size: 16px;
+  margin-left: 24px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.compare-bar-btn:disabled {
+  background: #b3c6e4;
+  cursor: not-allowed;
+}
+.compare-bar-clear {
+  background: none;
+  border: none;
+  color: #888;
+  margin-left: 16px;
+  cursor: pointer;
+  font-size: 14px;
+}

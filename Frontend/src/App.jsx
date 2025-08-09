@@ -9,10 +9,13 @@ import ForgotPassword from './Pages/forgotpassword/ForgotPassword';
 import UserProfile from './Pages/userProfile/userProfile'; 
 import About from './Pages/About/About';
 
-import './App.css'
+
+import './App.css';
 import SearchResults from './Pages/SearchResults/SearchResults';
 import PropertyDetail from './Pages/propertyDetail/propertyDetail';
 import SavedProperties from './Pages/SavedProperties/SavedProperties';
+import ComparePage from './Pages/Compare/ComparePage';
+import CompareBar from './Components/CompareBar/CompareBar';
 
 const AppContent = () => {
   return (
@@ -29,8 +32,10 @@ const AppContent = () => {
         <Route path="/search" element={<SearchResults />} />
         <Route path="/property/:id" element={<PropertyDetail />} />
         <Route path="/saved-properties" element={<SavedProperties />} />
+        <Route path="/compare" element={<ComparePage />} />
       </Routes>
-       <Footer />
+      <CompareBar />
+      <Footer />
     </>
   );
 };

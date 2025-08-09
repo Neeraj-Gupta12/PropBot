@@ -2,17 +2,27 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
 import { getProperty } from "../../redux/slices/propertiesSlice";
 import Loader from "../../Components/Loader/Loader";
 import "./propertyDetail.css";
 import { FaMapMarkerAlt, FaBed, FaBath, FaRulerCombined } from "react-icons/fa";
 import { getAmenityIcon } from "../../Components/Property/amenityIcons";
 
+import { addToCompare, removeFromCompare } from "../../redux/slices/compareSlice";
+
 const PropertyDetail = () => {
+
   const { id } = useParams();
   const dispatch = useDispatch();
   const property = useSelector((state) => state.properties.currentProperty);
   const loading = useSelector((state) => state.properties.loading);
+  const compareList = useSelector((state) => state.compare.compareList);
+  const compareIds = compareList.map((p) => p.id);
+  // Debug logs
+  console.log('compareList:', compareList);
+  console.log('compareIds:', compareIds);
+  console.log('property:', property);
 
   // No button active by default on detail page
   const [activeButton, setActiveButton] = useState("");
@@ -27,6 +37,20 @@ const PropertyDetail = () => {
     dispatch(getProperty(id));
   }, [dispatch, id]);
 
+
+  // Compare button logic
+  const isCompared = property && compareIds.includes(property.id);
+  const isCompareDisabled = !isCompared && compareList.length >= 3;
+  console.log('isCompared:', isCompared, 'isCompareDisabled:', isCompareDisabled);
+
+  const handleCompareClick = () => {
+    if (isCompared) {
+  dispatch(removeFromCompare(property.id));
+    } else {
+  dispatch(addToCompare(property));
+    }
+  };
+
   return (
     <div>
       <section className="property-detail-section">
@@ -39,7 +63,29 @@ const PropertyDetail = () => {
         )}
         {!loading && property && (
           <>
-            <div className="property-detail-header">{property.title}</div>
+            <div className="property-detail-header" style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:16}}>
+              <span>{property.title}</span>
+              <button
+                className={`compare-btn${isCompared ? ' compared' : ''}`}
+                onClick={handleCompareClick}
+                disabled={isCompareDisabled}
+                style={{
+                  marginLeft: 'auto',
+                  background: isCompared ? '#e74c3c' : '#408de4',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 6,
+                  padding: '8px 18px',
+                  fontWeight: 600,
+                  fontSize: 15,
+                  cursor: isCompareDisabled ? 'not-allowed' : 'pointer',
+                  opacity: isCompareDisabled ? 0.6 : 1,
+                  transition: 'background 0.2s',
+                }}
+              >
+                {isCompared ? 'Remove from Compare' : isCompareDisabled ? 'Max 3 properties' : 'Add to Compare'}
+              </button>
+            </div>
             <div className="property-detail-meta">
               <div className="property-detail-location">
                 <FaMapMarkerAlt style={{ marginRight: 6, color: "#408de4" }} />
@@ -49,6 +95,7 @@ const PropertyDetail = () => {
                 Price: <span style={{ fontWeight: 600 }}>${property.price}</span>
               </div>
             </div>
+            {/* Compare button now in header */}
             <div className="property-detail-images">
               <img
                 src={property.image}

@@ -1,3 +1,15 @@
+/* Compare checkbox style */
+.property-detail-compare-checkbox {
+  margin: 18px 0 10px 0;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+.property-detail-compare-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #408de4;
+}
 .property-detail-section {
   max-width: 1200px;
   margin: 1rem auto;

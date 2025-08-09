@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUser } from "../../redux/slices/userSlice";
+import { clearCompare } from "../../redux/slices/compareSlice";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FaTimes, FaRegUser } from "react-icons/fa";
@@ -28,6 +29,7 @@ const Navbar = () => {
   const logoutUser = async () => {
     try {
       dispatch(clearUser());
+      dispatch(clearCompare());
       toast.success("Logged out successfully!");
       navigate("/");
     } catch (error) {
