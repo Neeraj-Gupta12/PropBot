@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  compareList: [], // Array of property objects or IDs
+  compareList: [],
 };
 
 const compareSlice = createSlice({

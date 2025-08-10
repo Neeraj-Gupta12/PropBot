@@ -9,8 +9,6 @@ import ErrorHandler from "../Utils/errorHandler.js";
 import nlp from "compromise";
 
 
-
-// Utility to merge property data from 3 JSON files (ESM compatible)
 function mergePropertiesData() {
   const basics = property_basics;
   const characteristics = property_characteristics;
@@ -27,7 +25,6 @@ function mergePropertiesData() {
   });
 }
 
-// Get all properties (merged from JSON files)
 export const getAllProperties = catchAsyncError(async (req, res, next) => {
   const merged = mergePropertiesData();
   res.status(200).json({
@@ -37,7 +34,6 @@ export const getAllProperties = catchAsyncError(async (req, res, next) => {
   });
 });
 
-// Get single property by ID (merged from JSON files)
 export const getProperty = catchAsyncError(async (req, res, next) => {
   const merged = mergePropertiesData();
   const id = Number(req.params.id);
@@ -66,7 +62,7 @@ export const filteredProperties = catchAsyncError(async (req, res, next) => {
     keyword
   } = req.query;
   if (location) {
-  // Support multiple locations: array or comma-separated string
+  // Handle multiple locations (array or comma-separated string)
   let locationArr = [];
   if (Array.isArray(location)) {
     locationArr = location;
@@ -78,22 +74,22 @@ export const filteredProperties = catchAsyncError(async (req, res, next) => {
     results = results.filter((p) => {
       if (!p.location) return false;
       
-      // Normalize both the property location and search terms
+  // Normalize property location and search terms
       const propLoc = p.location.toLowerCase();
       
       return locationArr.some(searchLoc => {
         const normSearchLoc = searchLoc.toLowerCase();
         
-        // Check different matching possibilities
+  // Check for location match (exact or partial)
         return (
-          propLoc === normSearchLoc || // Exact match
-          propLoc.startsWith(normSearchLoc.split(',')[0]) || // "New York" matches "New York, NY"
-          normSearchLoc.startsWith(propLoc.split(',')[0]) // "New York, NY" matches "New York"
+          propLoc === normSearchLoc ||
+          propLoc.startsWith(normSearchLoc.split(',')[0]) ||
+          normSearchLoc.startsWith(propLoc.split(',')[0])
         );
       });
     });
   } else {
-    // fallback to single location string
+  // Fallback: single location string
     const searchLoc = location.toLowerCase();
     results = results.filter((p) => 
       p.location && (
@@ -152,7 +148,7 @@ export const saveProperty = catchAsyncError(async (req, res, next) => {
   if (!user) {
     return next(new ErrorHandler("User not found", 404));
   }
-  // Save as string, not ObjectId
+  // Save property as string (not ObjectId)
   if (user.savedProperties.map(id => id.toString()).includes(propertyId.toString())) {
     return res.status(200).json({ success: true, message: "Property already saved" });
   }
@@ -161,7 +157,6 @@ export const saveProperty = catchAsyncError(async (req, res, next) => {
   res.status(200).json({ success: true, message: "Property saved successfully" });
 });
 
-// Unsave a property for a user
 export const unsaveProperty = catchAsyncError(async (req, res, next) => {
   const userId = req.user.id;
   const { propertyId } = req.body;
@@ -179,7 +174,6 @@ export const unsaveProperty = catchAsyncError(async (req, res, next) => {
   res.status(200).json({ success: true, message: "Property unsaved successfully" });
 });
 
-// Get all saved properties for a user
 export const getSavedProperties = catchAsyncError(async (req, res, next) => {
   const userId = req.user.id;
   const user = await User.findById(userId);
@@ -200,7 +194,6 @@ let savedIds = [];
   });
 });
 
-// Suggestion controller for chatbot predefined suggestions
 export const suggestionController = catchAsyncError(async (req, res, next) => {
   const { suggestion } = req.query;
   const PREDEFINED = [
@@ -219,12 +212,12 @@ export const suggestionController = catchAsyncError(async (req, res, next) => {
   
   const s = suggestion.toLowerCase();
 
-  // 1. Handle "Show me properties under $500,000"
+  // Handle: "Show me properties under $500,000"
   if (s === "show me properties under $500,000") {
     filtered = filtered.filter(p => p.price <= 500000);
   }
 
-  // 2. Handle "I want a 3-bedrooms apartment in New York"
+  // Handle: "I want a 3-bedrooms apartment in New York"
   else if (s === "i want a 3-bedrooms apartment in new york") {
     filtered = filtered.filter(p => {
       const location = (p.location || "").toLowerCase();
@@ -236,7 +229,7 @@ export const suggestionController = catchAsyncError(async (req, res, next) => {
     });
   }
   
-  // 3. Handle "Find Apartment with a swimming pool"
+  // Handle: "Find Apartment with a swimming pool"
   else if (s === "find apartment with a swimming pool") {
     filtered = filtered.filter(p => 
       (p.title.toLowerCase().includes("apartment") || p.type?.toLowerCase() === "apartment") &&
@@ -245,7 +238,7 @@ export const suggestionController = catchAsyncError(async (req, res, next) => {
     );
   }
   
-  // 4. Handle "Show me villas with a private garden"
+  // Handle: "Show me villas with a private garden"
   else if (s === "show me villas with a private garden") {
     filtered = filtered.filter(p => 
       (p.title.toLowerCase().includes("villa") || p.type?.toLowerCase() === "villa") &&
@@ -263,12 +256,11 @@ export const suggestionController = catchAsyncError(async (req, res, next) => {
 
 
 
-// --- Property Chatbot Controller ---
-// Helper: filter properties by property type keyword (robust, supports variants)
+// Property Chatbot Controller helpers
 function filterPropertiesByMessage(message) {
   const allProperties = mergePropertiesData();
   const msg = message.toLowerCase();
-  // Map of property types to their variants (add more as needed)
+  // Map of property types to variants
   const typeVariants = {
     apartment: ["apartment", "apartments", "appartment", "appartments", "allapartment", "allapartments", "apprtment", "aprtment", "aprtments"],
     villa: ["villa", "villas", "vila", "villas"],
@@ -281,7 +273,7 @@ function filterPropertiesByMessage(message) {
     "smart home": ["smart home", "smarthome", "smart homes", "smarthomes"],
     // Add more as needed
   };
-  // Try to detect property type in message
+  // Detect property type in message
   let detectedType = null;
   for (const [type, variants] of Object.entries(typeVariants)) {
     if (variants.some(v => msg.includes(v))) {
@@ -290,7 +282,7 @@ function filterPropertiesByMessage(message) {
     }
   }
   if (detectedType) {
-    // Only return properties matching this type (in title or type)
+  // Return properties matching detected type
     return allProperties.filter(p => {
       const t = (p.type || "").toLowerCase();
       const title = (p.title || "").toLowerCase();
@@ -298,7 +290,7 @@ function filterPropertiesByMessage(message) {
       return t === detectedType || title.includes(detectedType);
     });
   }
-  // Fallback: old logic (broad match)
+  // Fallback: broad keyword match
   const keywords = msg.split(/\s+/);
   return allProperties.filter(property => {
     return keywords.some(word =>
@@ -312,11 +304,10 @@ function filterPropertiesByMessage(message) {
     );
   });
 }
-// Helper: create a short description for a property
+// Create a short description for a property
 function propertyShortDesc(property) {
   return `${property.title} in ${property.location} for $${property.price}`;
 }
-// --- Property Chatbot Controller ---
 export const chatbotController = (req, res) => {
   const { message } = req.query;
   if (!message) {
@@ -329,7 +320,7 @@ export const chatbotController = (req, res) => {
   const doc = nlp(message);
   const lowerMsg = message.toLowerCase().trim();
 
-  // --- Greeting Responses ---
+  // Greeting responses
   const greetingsMap = [
     { pattern: /^hi$/, response: "Hi! How can I help you with your property search today?" },
     { pattern: /^hello$/, response: "Hello! Welcome to PropBot. How can I assist you?" },
@@ -383,13 +374,13 @@ export const chatbotController = (req, res) => {
 
 
 
-  // Helper: extract property IDs from message (e.g., 'id 1 and 3', 'id: 2, 5')
+  // Extract property IDs from message
   function extractPropertyIds(msg) {
-    // Match patterns like 'id 1', 'id 1 and 3', 'id: 2, 5', 'ids 1,2,3'
+  // Match patterns like 'id 1', 'id 1 and 3', 'id: 2, 5', 'ids 1,2,3'
     const idPattern = /id[s]?\s*[:]?\s*((\d+[ ,and]*)+)/i;
     const match = msg.match(idPattern);
     if (match && match[1]) {
-      // Split by comma, 'and', or space
+  // Split by comma, 'and', or space
       return match[1]
         .split(/,|and|\s+/)
         .map(s => s.trim())
@@ -400,7 +391,7 @@ export const chatbotController = (req, res) => {
     return [];
   }
 
-  // Helper: extract amenities from message
+  // Extract amenities from message
   function extractAmenities(msg) {
     // List of known amenities (expand as needed)
     const knownAmenities = [
@@ -408,7 +399,7 @@ export const chatbotController = (req, res) => {
     ];
     const found = [];
     for (const amenity of knownAmenities) {
-      // Match as whole word or phrase, case-insensitive
+  // Match as whole word or phrase, case-insensitive
       const regex = new RegExp(`\\b${amenity.replace(/[-/]/g, "[ -/]?")}\\b`, "i");
       if (regex.test(msg)) {
         found.push(amenity);
@@ -417,18 +408,18 @@ export const chatbotController = (req, res) => {
     return found;
   }
 
-  // Improved bedroom extraction that ignores standalone numbers
+  // Extract bedrooms (ignores standalone numbers)
   function extractBedrooms(msg) {
-    // First check if this is part of a price query
+  // Ignore if part of a price query
     if (/(?:price|cost|budget|\$|dollar|rs|inr|rupees|usd)\s+\d+/i.test(msg)) {
       return null;
     }
     
-    // Match patterns like: "3 bedroom", "3br", "3 bhk", "3 beds"
+  // Match patterns like: "3 bedroom", "3br", "3 bhk", "3 beds"
     const bedroomMatch = msg.match(/(\d+)\s*(?:bed|bedroom|bedrooms|br|bhk|beds|bed\s*room|bed\s*rooms)/i);
     if (bedroomMatch) return Number(bedroomMatch[1]);
     
-    // Match "of 3 bedrooms" only if not price context
+  // Match "of 3 bedrooms" only if not price context
     const ofBedroomMatch = msg.match(/of\s+(\d+)\s*(?:bed|bedroom|bedrooms)/i);
     if (ofBedroomMatch && !hasPriceContext(msg)) return Number(ofBedroomMatch[1]);
     
@@ -446,18 +437,18 @@ export const chatbotController = (req, res) => {
     return new RegExp(`(?:^|\\s)(${priceKeywords.join('|')})(?:$|\\s)`, 'i').test(msg);
   }
 
-  // More precise price extraction
+  // Extract price (precise)
   function extractPrice(msg) {
     if (!hasPriceContext(msg)) return null;
 
-    // Match patterns like: "$30000", "30000 dollars", "price 30000"
+  // Match patterns like: "$30000", "30000 dollars", "price 30000"
     const priceMatch = msg.match(/(?:\$|₹|€|£|dollar|rupee|rs|inr|usd|price|cost|budget)\s*(\d[\d,.]*)|(\d[\d,.]*)\s*(?:dollar|rupee|rs|inr|usd)/i);
     if (priceMatch) {
       const amount = priceMatch[1] || priceMatch[2];
       return parseFloat(amount.replace(/,/g, ''));
     }
     
-    // Match "of 30000" only with price context
+  // Match "of 30000" only with price context
     const ofPriceMatch = msg.match(/of\s+(\d[\d,.]*)(?:\s*(?:dollar|rupee|rs|inr|usd))?/i);
     if (ofPriceMatch && hasPriceContext(msg)) {
       return parseFloat(ofPriceMatch[1].replace(/,/g, ''));
@@ -470,16 +461,14 @@ export const chatbotController = (req, res) => {
     if (/(?:under|below|less than|upto|up to)/i.test(msg)) return "below";
     if (/(?:above|over|more than|from)/i.test(msg)) return "above";
     if (/(?:exactly|equal to|price of|at)/i.test(msg)) return "equal";
-    
     // If $ or currency symbol is present with no range keyword, treat as exact
     if (/(?:\$|₹|€|£|dollar|rupee|rs|inr|usd)/i.test(msg)) {
       return "equal";
     }
-    
     return null;
   }
 
-  // --- Property Filtering ---
+  // Property filtering
 
 
   const location = doc.places().out('array')[0];
@@ -492,13 +481,13 @@ export const chatbotController = (req, res) => {
   const amenities = extractAmenities(lowerMsg);
   const propertyIds = extractPropertyIds(lowerMsg);
 
-  // NEW: Check if the query is gibberish (no meaningful filters detected)
+  // Check if the query is gibberish (no meaningful filters detected)
   const isGibberishQuery = !location && !bedrooms && !priceValue && !bathrooms && !size && !detectedType && amenities.length === 0 && propertyIds.length === 0;
 
   let merged = mergePropertiesData();
   let matchedProperties = [...merged];
 
-  // --- Special Case Handling ---
+  // Special case handling
   let botMessage = "";
   let name = null;
   if (lowerMsg.includes("my name is")) {
@@ -553,7 +542,7 @@ export const chatbotController = (req, res) => {
   }
 
 
-  // --- Direct title match: if user's message matches a property title, return that property only ---
+  // Direct title match: if user's message matches a property title, return that property only
   const exactTitleMatch = merged.find(p => p.title && p.title.toLowerCase() === lowerMsg);
   let usedIdFilter = false;
   if (exactTitleMatch) {
@@ -609,7 +598,7 @@ export const chatbotController = (req, res) => {
     }
   }
 
-  // --- Generate Professional Response ---
+  // Generate professional response
   if (/^\d+$/.test(message.trim())) {
     const number = parseInt(message.trim());
     if (number > 1000) {
@@ -679,14 +668,13 @@ export const chatbotController = (req, res) => {
           "- Checking for typos";
     }
   }
-  console.log("matchedProperties:", matchedProperties);
   return res.json({
     message: botMessage,
     properties: matchedProperties
   });
 };
 
-// Helper: detect property type with variants
+// Detect property type with variants
 function detectPropertyType(msg) {
   const typeVariants = {
     apartment: ["apartment", "apartments", "apt", "apts"],
@@ -709,13 +697,13 @@ function detectPropertyType(msg) {
   return null;
 }
 
-// Helper: extract bathrooms
+// Extract bathrooms
 function extractBathrooms(msg) {
   const match = msg.match(/(\d+)\s*(?:bath|bathroom|bathrooms|baths|ba|bth)/i);
   return match ? Number(match[1]) : null;
 }
 
-// Helper: extract size
+// Extract size
 function extractSize(msg) {
   const match = msg.match(/(\d+)\s*(?:sqft|sq ft|square feet|sqm|sq m)/i);
   return match ? Number(match[1]) : null;

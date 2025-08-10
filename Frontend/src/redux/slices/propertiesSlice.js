@@ -30,7 +30,7 @@ const propertySlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    // Get all properties
+  // Get all properties (async)
     builder
       .addCase("property/getAllProperties/pending", (state) => {
         state.loading = true;
@@ -45,7 +45,7 @@ const propertySlice = createSlice({
         state.error = action.error.message;
       });
 
-    // Get single property
+  // Get single property (async)
     builder
       .addCase("property/getProperty/pending", (state) => {
         state.loading = true;
@@ -60,7 +60,7 @@ const propertySlice = createSlice({
         state.error = action.error.message;
       });
 
-    // Filter/search properties
+  // Filter/search properties (async)
     builder
       .addCase("property/filterProperties/pending", (state) => {
         state.loading = true;
@@ -75,7 +75,7 @@ const propertySlice = createSlice({
         state.error = action.error.message;
       });
 
-    // Save property
+  // Save property (async)
     builder
       .addCase("property/saveProperty/pending", (state) => {
         state.saveLoading = true;
@@ -91,7 +91,7 @@ const propertySlice = createSlice({
         state.saveError = action.error.message;
       });
 
-    // Unsave property
+  // Unsave property (async)
     builder
       .addCase("property/unsaveProperty/pending", (state) => {
         state.saveLoading = true;
@@ -107,7 +107,7 @@ const propertySlice = createSlice({
         state.saveError = action.error.message;
       });
 
-    // Get saved properties
+  // Get saved properties (async)
     builder
       .addCase("property/getSavedProperties/pending", (state) => {
         state.loading = true;
@@ -122,7 +122,7 @@ const propertySlice = createSlice({
         state.error = action.error.message;
       });
 
-    // Suggestion properties (chatbot)
+  // Suggestion properties (chatbot async)
     builder
       .addCase("property/getSuggestionProperties/pending", (state) => {
         state.loading = true;
@@ -137,7 +137,7 @@ const propertySlice = createSlice({
         state.error = action.error.message;
       });
 
-    // Chatbot property search
+  // Chatbot property search (async)
     builder
       .addCase("property/chatbotProperties/pending", (state) => {
         state.loading = true;

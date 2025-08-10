@@ -3,7 +3,7 @@ import User from "../Modals/userModal.js";
 
 export const isAuthenticated = async (req, res, next) => {
   try {
-    // Check for token in Authorization header or cookies
+  // Check for token in header or cookies
     let token = req.cookies?.token;
     if (!token && req.headers.authorization) {
       token = req.headers.authorization.replace("Bearer ", "");

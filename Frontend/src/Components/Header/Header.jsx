@@ -44,14 +44,10 @@ const initialBotMsg = {
 const Header = ({ onApplyFilters, scrollToPropertiesSection, setPropertiesHeading, ...props }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [chat, setChat] = useState([initialBotMsg]);
-  // Fullscreen state
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Get chatbot response and properties from Redux state
   const chatbotReply = useSelector(state => state.properties.chatbotMessage);
-  console.log("chatbotReply", chatbotReply);
   const chatbotProps = useSelector(state => state.properties.chatbotProperties);
-  console.log("chatbotProps", chatbotProps);
   const suggestionProperties = useSelector(state => state.properties.properties);
   const [showFilter, setShowFilter] = useState(false);
   const [filters, setFilters] = useState({
@@ -64,9 +60,7 @@ const Header = ({ onApplyFilters, scrollToPropertiesSection, setPropertiesHeadin
     amenities: [],
     showLocationDropdown: false
   });
-  // Ref for chat messages container
   const messagesEndRef = useRef(null);
-  // Scroll to bottom when chat changes
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
@@ -75,9 +69,6 @@ const Header = ({ onApplyFilters, scrollToPropertiesSection, setPropertiesHeadin
 
   const dispatch = useDispatch();
 
-
-  // Handle normal user message (chatbot)
-  // Utility to clean heading
   const cleanHeading = (str) => {
     return str.replace(/^(Show me|I want a|Find|Show me)\s*/i, '').trim();
   };
@@ -93,10 +84,8 @@ const Header = ({ onApplyFilters, scrollToPropertiesSection, setPropertiesHeadin
     dispatch(chatbotProperties(msg));
   };
 
-  // Track if a suggestion was clicked
   const [activeSuggestion, setActiveSuggestion] = useState(null);
 
-  // Handle predefined suggestion click
   const handleSuggestion = (suggestion) => {
     setChat(prev => [
       ...prev,
@@ -107,7 +96,6 @@ const Header = ({ onApplyFilters, scrollToPropertiesSection, setPropertiesHeadin
     dispatch(getSuggestionProperties(suggestion));
   };
 
-  // When suggestionProperties change after a suggestion, add bot message
   useEffect(() => {
     if (activeSuggestion !== null && Array.isArray(suggestionProperties)) {
       setChat(prev => [
@@ -123,9 +111,7 @@ const Header = ({ onApplyFilters, scrollToPropertiesSection, setPropertiesHeadin
     }
   }, [suggestionProperties, activeSuggestion]);
 
-  // Listen for chatbot response and update chat
   useEffect(() => {
-    // Only add bot message, never update heading from chatbot message
     if (chatbotReply !== null && Array.isArray(chatbotProps)) {
       if (chatbotProps.length > 0) {
         setChat(prev => [
@@ -137,7 +123,6 @@ const Header = ({ onApplyFilters, scrollToPropertiesSection, setPropertiesHeadin
             showViewProperties: true
           }
         ]);
-        // Never update heading here
       } else {
         setChat(prev => [
           ...prev,
@@ -148,10 +133,8 @@ const Header = ({ onApplyFilters, scrollToPropertiesSection, setPropertiesHeadin
             showViewProperties: false
           }
         ]);
-        // Never update heading here
       }
     }
-    // eslint-disable-next-line
   }, [chatbotReply, chatbotProps]);
 
   const handleApplyFilters = () => {
@@ -219,9 +202,7 @@ const Header = ({ onApplyFilters, scrollToPropertiesSection, setPropertiesHeadin
         </button>
       )}
 
-      {/* Main content: split left (chatbot) and right (property cards) in fullscreen, else normal */}
-  <div className={`header-main-content${isFullscreen ? ' header-main-content-fullscreen' : ''}`}> 
-        {/* Left: Chatbox section, wider in fullscreen */}
+      <div className={`header-main-content${isFullscreen ? ' header-main-content-fullscreen' : ''}`}> 
         <div
           className={isFullscreen ? 'fullscreen-chatbox-left' : ''}
         >
@@ -230,7 +211,6 @@ const Header = ({ onApplyFilters, scrollToPropertiesSection, setPropertiesHeadin
               <p className="chatbot-desc">Welcome to PropBot! Your smart home-hunting assistant. Just chat your budget, location & needs — and get personalized property suggestions. Use filters for even better results!</p>
             </div>
           <div className={`chatbot-chatbox${isFullscreen ? ' chatbot-chatbox-fullscreen' : ''}`}> 
-            {/* Fullscreen button above welcome message, only for desktop/laptop and only if not already fullscreen */}
             {!isFullscreen && (
               <div className="chatbot-fullscreen-btn-row">
                 <button
@@ -302,7 +282,6 @@ const Header = ({ onApplyFilters, scrollToPropertiesSection, setPropertiesHeadin
             </div>
           </div>
         </div>
-        {/* Right side: property cards placeholder in fullscreen, else nothing */}
         {isFullscreen && (
           <div
             className="fullscreen-property-cards-right"
