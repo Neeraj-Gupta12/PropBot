@@ -278,7 +278,7 @@ function filterPropertiesByMessage(message) {
   }
   // Fallback: old logic (broad match)
   const keywords = msg.split(/\s+/);
-  const filtered = allProperties.filter(property => {
+  return allProperties.filter(property => {
     return keywords.some(word =>
       Object.values(property).some(val =>
         typeof val === "string"
@@ -289,8 +289,6 @@ function filterPropertiesByMessage(message) {
       )
     );
   });
-  // If nothing matches, return empty array
-  return filtered.length > 0 ? filtered : [];
 }
 // Helper: create a short description for a property
 function propertyShortDesc(property) {
@@ -434,6 +432,9 @@ export const chatbotController = (req, res) => {
   const size = extractSize(lowerMsg);
   const detectedType = detectPropertyType(lowerMsg);
 
+   // NEW: Check if the query is gibberish (no meaningful filters detected)
+  const isGibberishQuery = !location && !bedrooms && !priceValue && !bathrooms && !size && !detectedType;
+
   let merged = mergePropertiesData();
   let matchedProperties = [...merged];
 
@@ -479,6 +480,16 @@ export const chatbotController = (req, res) => {
 
   if (botMessage) {
     return res.json({ message: botMessage, properties: [] });
+  }
+
+  if (isGibberishQuery) {
+    return res.json({
+      message: "I couldn't understand your property search query. Please try something like:\n" +
+               "- '3 bedroom apartments in New York'\n" +
+               "- 'Houses under $500,000'\n" +
+               "- 'Villas with swimming pool'",
+      properties: []
+    });
   }
 
   // Apply filters in specific order
@@ -581,13 +592,6 @@ export const chatbotController = (req, res) => {
           "- Fewer filters\n" +
           "- Checking for typos";
     }
-  }
-  // If no properties matched, return a helpful message and empty array
-  if (matchedProperties.length === 0) {
-    return res.json({
-      message: "Koi property aapki query se match nahi hui. Kripya apni query ko aur specific banaye ya naye shabd try kare.",
-      properties: []
-    });
   }
   console.log("matchedProperties:", matchedProperties);
   return res.json({
