@@ -359,7 +359,25 @@ export const chatbotController = (req, res) => {
     return res.json({ message: greetingMatch.response, properties: [] });
   }
 
+
   // --- Enhanced Helper Functions ---
+
+  // Helper: extract amenities from message
+  function extractAmenities(msg) {
+    // List of known amenities (expand as needed)
+    const knownAmenities = [
+      "gym", "swimming pool", "parking", "beach access", "security", "balcony", "private garden", "smart home", "garage", "laundry", "rooftop terrace", "smart security", "private elevator", "park view", "24/7 concierge", "fitness center", "private dock", "boat parking", "bbq area", "backyard", "community pool", "pet friendly", "home office", "solar panels", "two-car garage", "minimalist design", "smart appliances", "energy efficient"
+    ];
+    const found = [];
+    for (const amenity of knownAmenities) {
+      // Match as whole word or phrase, case-insensitive
+      const regex = new RegExp(`\\b${amenity.replace(/[-/]/g, "[ -/]?")}\\b`, "i");
+      if (regex.test(msg)) {
+        found.push(amenity);
+      }
+    }
+    return found;
+  }
 
   // Improved bedroom extraction that ignores standalone numbers
   function extractBedrooms(msg) {
@@ -424,6 +442,7 @@ export const chatbotController = (req, res) => {
   }
 
   // --- Property Filtering ---
+
   const location = doc.places().out('array')[0];
   const bedrooms = extractBedrooms(lowerMsg);
   const priceValue = extractPrice(lowerMsg);
@@ -431,9 +450,10 @@ export const chatbotController = (req, res) => {
   const bathrooms = extractBathrooms(lowerMsg);
   const size = extractSize(lowerMsg);
   const detectedType = detectPropertyType(lowerMsg);
+  const amenities = extractAmenities(lowerMsg);
 
-   // NEW: Check if the query is gibberish (no meaningful filters detected)
-  const isGibberishQuery = !location && !bedrooms && !priceValue && !bathrooms && !size && !detectedType;
+  // NEW: Check if the query is gibberish (no meaningful filters detected)
+  const isGibberishQuery = !location && !bedrooms && !priceValue && !bathrooms && !size && !detectedType && amenities.length === 0;
 
   let merged = mergePropertiesData();
   let matchedProperties = [...merged];
@@ -492,6 +512,7 @@ export const chatbotController = (req, res) => {
     });
   }
 
+
   // Apply filters in specific order
   if (detectedType) {
     matchedProperties = matchedProperties.filter(p => 
@@ -506,7 +527,6 @@ export const chatbotController = (req, res) => {
 
   if (priceValue) {
     const priceFilterType = priceType || "equal"; // Default to exact match if no type specified
-    
     if (priceFilterType === "below") {
       matchedProperties = matchedProperties.filter(p => p.price <= priceValue);
     } else if (priceFilterType === "above") {
@@ -528,6 +548,15 @@ export const chatbotController = (req, res) => {
 
   if (size) {
     matchedProperties = matchedProperties.filter(p => Number(p.size_sqft) === Number(size));
+  }
+
+  // --- Amenities filter ---
+  if (amenities.length > 0) {
+    matchedProperties = matchedProperties.filter(p =>
+      Array.isArray(p.amenities) && amenities.every(a =>
+        p.amenities.some(pa => pa.toLowerCase() === a.toLowerCase())
+      )
+    );
   }
 
   // --- Generate Professional Response ---
@@ -573,6 +602,7 @@ export const chatbotController = (req, res) => {
     if (location) filters.push(`in ${location}`);
     if (bathrooms) filters.push(`${bathrooms} bathroom${bathrooms > 1 ? 's' : ''}`);
     if (size) filters.push(`${size} sqft`);
+    if (amenities.length > 0) filters.push(`with ${amenities.join(", ")}`);
 
     if (filters.length > 0) {
       if (matchedProperties.length === 0) {
@@ -580,7 +610,7 @@ export const chatbotController = (req, res) => {
                      `Suggestions:\n` +
                      `- Broaden your search criteria\n` +
                      `- Check nearby locations\n` +
-                     `- Adjust price range`;
+                     `- Adjust price range or amenities`;
       } else {
         botMessage = `Found ${matchedProperties.length} properties with ${filters.join(' ')}:`;
       }
