@@ -1,68 +1,51 @@
-# Travel Booking App
 
-A full-stack travel booking website inspired by MakeMyTrip, built with React.js frontend and Node.js backend.
+# PropBot – AI-Powered Property Suggestion Platform
+
+PropBot is a full-stack real estate platform that helps users discover, compare, and save properties with the assistance of an intelligent AI chatbot. The platform features a modern React.js frontend, a robust Node.js/Express backend, and a rule-based chatbot that guides users to their ideal home or investment property.
+
+**Key Highlight:**
+> PropBot includes an advanced property chatbot that understands user queries (like "3 BHK in Mumbai under 1 crore" or "Show me villas with a swimming pool") and suggests the best matching homes, making property search easy and interactive.
+
 
 ## 🎯 Features
 
-### ✅ Core Functionality
-- **Search Functionality**: Users can search for travel destinations by city name
-- **Trip Packages**: Display trip packages with title, duration, price, and description
-- **Hotel Listings**: Show hotels with name, price per night, rating, and images
-- **City Attractions**: Display tourist places with images and descriptions
-- **Chatbot Assistant**: Rule-based chatbot for travel queries
+### 🏡 Property Search & Discovery
+- **Smart Search**: Find properties by location, price, type (apartment, villa, etc.), amenities, bedrooms, and more.
+- **Compare Properties**: Add properties to a compare bar for side-by-side comparison.
+- **Save Favorites**: Users can save and manage their favorite properties.
+- **Detailed Listings**: Each property includes images, features, amenities, and pricing.
 
-### 🏨 Hotel Features
-- Hotel search by city
-- Price filtering
-- Rating-based sorting
-- Room type selection
-- Amenities display
+### 🤖 PropBot Chatbot
+- **Conversational Search**: Ask for homes in natural language (e.g., "2 BHK in Delhi under 50 lakhs").
+- **Personalized Suggestions**: Get property recommendations based on your needs.
+- **Predefined & Custom Queries**: Use quick suggestions or type your own.
+- **Friendly Guidance**: PropBot can greet, answer questions, and help refine your search.
 
-### 🗺️ Trip Features
-- Destination-based search
-- Duration and price filtering
-- Popular destinations showcase
-- Detailed trip itineraries
-- Booking management
+### � User Features
+- **Authentication**: Secure signup/login with JWT.
+- **Profile Management**: View and update user details.
+- **Saved Properties**: Access and manage your saved homes.
 
-### 🎡 Attraction Features
-- City-wise attraction listings
-- Category-based filtering
-- Top-rated attractions
-- Entry fee and visiting hours
-- Location details
 
-### 💬 Chatbot Features
-- Rule-based responses
-- Trip recommendations
-- Hotel suggestions
-- Attraction information
-- General travel queries
+### 🎨 UI/UX
+- **Modern, Responsive Design**: Works on all devices.
+- **Intuitive Navigation**: Easy to browse, search, and interact.
+
 
 ## 🛠️ Tech Stack
 
-### Frontend
-- **React.js** - UI framework
-- **Redux Toolkit** - State management
-- **React Router** - Navigation
-- **Axios** - HTTP client
-- **CSS3** - Styling
+**Frontend:**
+- React.js, Redux Toolkit, React Router, Axios, CSS3
 
-### Backend
-- **Node.js** - Runtime environment
-- **Express.js** - Web framework
-- **MongoDB** - Database
-- **Mongoose** - ODM
-- **JWT** - Authentication
-- **bcryptjs** - Password hashing
+**Backend:**
+- Node.js, Express.js, MongoDB, Mongoose, JWT, bcryptjs
 
-### Database Models
-- **User** - User authentication and profiles
-- **Trip** - Travel packages and itineraries
-- **Hotel** - Accommodation listings
-- **Attraction** - Tourist places
+**AI & Utilities:**
+- Rule-based NLP chatbot (using compromise.js)
+- Firebase Admin (for notifications, if enabled)
 
-## 🚀 Setup Instructions
+
+## 🚀 Getting Started
 
 ### Prerequisites
 - Node.js (v14 or higher)
@@ -111,72 +94,64 @@ A full-stack travel booking website inspired by MakeMyTrip, built with React.js 
 
 4. Open your browser and visit `http://localhost:5173`
 
+
 ## 📁 Project Structure
 
 ```
 Travel-app/
 ├── backend/
-│   ├── Controllers/          # API controllers
-│   ├── Modals/              # Database models
-│   ├── Routes/              # API routes
-│   ├── Utils/               # Utility functions
-│   └── app.js               # Express app setup
+│   ├── Controllers/          # Property, user, and chatbot controllers
+│   ├── Modals/               # Mongoose models (User, etc.)
+│   ├── Routes/               # API routes (property, user, chatbot)
+│   ├── Utils/                # Error handling, JWT, Firebase, etc.
+│   ├── data/                 # Property data (JSON)
+│   ├── middleware/           # Auth, error, async handling
+│   ├── config/               # Database config
+│   ├── app.js, index.js      # Express app entry
+│   └── package.json
 ├── Frontend/
 │   ├── src/
-│   │   ├── Components/      # React components
-│   │   ├── Pages/           # Page components
-│   │   ├── redux/           # Redux store and slices
-│   │   └── assets/          # Images and static files
-│   └── package.json
+│   │   ├── Components/       # UI components (Chatbot, CompareBar, etc.)
+│   │   ├── Pages/            # Main pages (Home, Login, Signup, etc.)
+│   │   ├── redux/            # Redux store, slices, API
+│   │   ├── Context/          # React context (UserContext)
+│   │   ├── assets/           # Images and static files
+│   │   └── Utils/            # Frontend utilities
+│   ├── public/               # Static assets
+│   ├── package.json
+│   └── vite.config.js
 └── README.md
 ```
 
-## 🔧 API Endpoints
 
-### Trips
-- `GET /api/trip/trips` - Get all trips
-- `GET /api/trip/trip/:id` - Get single trip
-- `GET /api/trip/search/trips` - Search trips by destination
-- `GET /api/trip/popular-destinations` - Get popular destinations
+## 🔧 Key API Endpoints
 
-### Hotels
-- `GET /api/hotel/hotels` - Get all hotels
-- `GET /api/hotel/hotel/:id` - Get single hotel
-- `GET /api/hotel/search/hotels` - Search hotels by city
-- `GET /api/hotel/hotels/city/:city` - Get hotels by city
+### Property APIs
+- `GET /api/property/all` – Get all properties
+- `GET /api/property/:id` – Get property by ID
+- `GET /api/property/filter` – Filter/search properties
+- `POST /api/property/save` – Save a property (user)
+- `POST /api/property/unsave` – Unsave a property (user)
+- `GET /api/property/saved` – Get all saved properties (user)
 
-### Attractions
-- `GET /api/attraction/attractions` - Get all attractions
-- `GET /api/attraction/attraction/:id` - Get single attraction
-- `GET /api/attraction/attractions/city/:city` - Get attractions by city
-- `GET /api/attraction/top-rated-attractions` - Get top rated attractions
+### User APIs
+- `POST /api/user/register` – Register
+- `POST /api/user/login` – Login
+- `GET /api/user/profile` – Get user profile
 
-### Bookings
-- `POST /api/booking/booking/new` - Create new booking
-- `GET /api/booking/me/bookings` - Get user bookings
-- `PUT /api/booking/booking/:id/cancel` - Cancel booking
+### Chatbot APIs
+- `POST /api/chatbot/chat` – Chat with PropBot (property suggestions)
+- `GET /api/chatbot/chat/suggestions` – Get predefined chatbot suggestions
 
-### Chatbot
-- `POST /api/chatbot/chat` - Chat with bot
-- `GET /api/chatbot/chat/suggestions` - Get chatbot suggestions
+### Universal Search
+- `POST /api/search` – Search across properties
 
-### search
-- `POST /api/search` - universalSearch for Trip Packages , Hotel and Attraction points 
 
-## 🎨 UI/UX Features
-
-- **Responsive Design**: Mobile and desktop compatible
-- **Modern UI**: Clean and intuitive interface
-- **Search Functionality**: Easy destination and hotel search
-- **Filtering Options**: Price, rating, and category filters
-- **Chatbot Integration**: Helpful travel assistant
-
-## 🔐 Authentication
-
+## 🔐 Authentication & Security
 - JWT-based authentication
-- User registration and login
-- Role-based access (user/admin)
 - Secure password hashing
+- Role-based access (user/admin)
+
 
 ## 🚀 Deployment
 
@@ -189,27 +164,25 @@ Travel-app/
 1. Build the project: `npm run build`
 2. Deploy to platforms like Vercel, Netlify, or GitHub Pages
 
-⚠️ Known Limitations
-1. Payment Gateway integration is currently not implemented.
-2. Review System for users/transactions is pending and will be added in future updates.
 
-##screenshots
-1. Home page
-<img width="1895" height="865" alt="image" src="https://github.com/user-attachments/assets/c5953643-f658-46a0-930e-2070c449cbc1" />
+⚠️ **Known Limitations**
+1. Payment gateway integration is not yet implemented.
+2. User review system is planned for future updates.
 
-2. Search Result Page
-<img width="1898" height="867" alt="image" src="https://github.com/user-attachments/assets/f2f575d7-6b5e-4b91-874f-6d11c82e9a91" />
 
-3 Detail page
-<img width="1899" height="860" alt="image" src="https://github.com/user-attachments/assets/298376b1-4c4e-4f2f-99f6-efa827b0ebc9" />
-
-4. Chatbot
-<img width="1898" height="867" alt="image" src="https://github.com/user-attachments/assets/f2da2dfd-dd28-4f63-8289-8671eab56569" />
-
-5. Admin dashbord 
-<img width="1899" height="865" alt="image" src="https://github.com/user-attachments/assets/4d8a3570-e7f6-44b4-ac4b-1d0ee2d2686d" />
+## 📸 Screenshots
+1. **Home Page**
+   ![Home Page](https://github.com/user-attachments/assets/c5953643-f658-46a0-930e-2070c449cbc1)
+2. **Search Result Page**
+   ![Search Result](https://github.com/user-attachments/assets/f2f575d7-6b5e-4b91-874f-6d11c82e9a91)
+3. **Property Detail Page**
+   ![Detail Page](https://github.com/user-attachments/assets/298376b1-4c4e-4f2f-99f6-efa827b0ebc9)
+4. **Chatbot**
+   ![Chatbot](https://github.com/user-attachments/assets/f2da2dfd-dd28-4f63-8289-8671eab56569)
 
 
 
 
+
+---
 ## 📄 License

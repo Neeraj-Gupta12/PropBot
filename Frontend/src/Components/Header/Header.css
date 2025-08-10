@@ -1,3 +1,211 @@
+/* Fullscreen header root */
+.chatbot-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2000;
+  background: #fff;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: center;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(.4,1.4,.6,1);
+}
+
+/* Fullscreen close button */
+.chatbot-close-btn-fullscreen {
+  position: fixed;
+  top: 18px;
+  right: 24px;
+  z-index: 2100;
+  background: #fff;
+  border: 1.5px solid #408de4;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px 0 rgba(64,141,228,0.10);
+  cursor: pointer;
+}
+
+/* Main content flex container in fullscreen */
+.header-main-content-fullscreen {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  flex: 1;
+  align-items: stretch;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Left chatbox section in fullscreen */
+.fullscreen-chatbox-left {
+  flex: 1.3;
+  min-width: 0;
+  max-width: 60%;
+  border-right: 2px solid #e3eaf5;
+  background: linear-gradient(120deg, #f7faff 80%, #eaf3fb 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 32px 0 0 0;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Heading section in fullscreen */
+.chatbot-heading-section-fullscreen {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+/* Fullscreen button row above welcome message */
+.chatbot-fullscreen-btn-row {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 35px;
+}
+/* Hide fullscreen button on mobile/tablet */
+.chatbot-fullscreen-btn {
+  display: inline-flex;
+}
+@media (max-width: 1024px) {
+  .chatbot-fullscreen-btn {
+    display: none !important;
+  }
+}
+
+/* Responsive fullscreen property cards grid */
+@media (max-width: 1024px) {
+  .fullscreen-property-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+}
+.chatbot-chatbox-fullscreen {
+  height: 70vh !important;
+  width: 80vh !important;
+  max-width: 60vh !important;
+  max-height:70vh !important;
+  min-width: 820px;
+  margin: 0 auto;
+}
+.fullscreen-chatbox-left {
+  min-width: 0 !important;
+  max-width: 60vw !important;
+  width: 60vw !important;
+  border-right: 2px solid #e3eaf5;
+  background: linear-gradient(120deg, #f7faff 80%, #eaf3fb 100%);
+  height: 100%;
+  padding: 32px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.fullscreen-property-cards-right {
+  min-width: 0 !important;
+  max-width: 40vw !important;
+  width: 40vw !important;
+  background: #fff;
+  height: 100%;
+  padding: 32px 24px 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow-y: auto;
+}
+.fullscreen-property-cards-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px 18px;
+  padding-bottom: 32px;
+}
+/* Make property cards smaller in fullscreen */
+.fullscreen-property-cards-grid .property-card {
+  max-width: 320px !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  height: 320px !important;
+}
+@media (max-width: 1200px) {
+  .fullscreen-chatbox-left { max-width: 100vw !important; width: 100vw !important; }
+  .fullscreen-property-cards-right { max-width: 100vw !important; width: 100vw !important; }
+  .fullscreen-property-cards-grid { grid-template-columns: 1fr !important; }
+}
+/* Fullscreen overlay styles */
+.chatbot-close-btn {
+  position: fixed;
+  top: 18px;
+  right: 24px;
+  z-index: 2100;
+}
+.chatbot-fullscreen-btn {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  z-index: 120;
+  background: #fff;
+  border: 1.5px solid #408de4;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px 0 rgba(64,141,228,0.10);
+  cursor: pointer;
+}
+@media (max-width: 900px) {
+  .chatbot-fullscreen-btn {
+    /* display: none !important; */
+  }
+}
+.chatbot-chatbox {
+  position: relative;
+}
+@media (max-width: 900px) {
+  .chatbot-fullscreen-content {
+    flex-direction: column;
+    width: 98vw;
+    height: 98vh;
+    min-width: 0;
+    min-height: 0;
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+  .chatbot-fullscreen-left, .chatbot-fullscreen-right {
+    min-width: 0;
+    max-width: 100vw;
+    width: 100vw;
+    padding: 18px 4vw 0 4vw;
+  }
+  .chatbot-fullscreen-left {
+    border-right: none;
+    border-bottom: 2px solid #e3eaf5;
+    min-height: 320px;
+    max-height: 60vh;
+  }
+  .chatbot-fullscreen-right {
+    min-height: 200px;
+    max-height: 40vh;
+    padding-top: 12px;
+  }
+}
 /* Responsive font size for Header chat messages */
 .header-message-text {
   font-size: 1.05rem;
@@ -315,11 +523,17 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  max-height: 400px;
-  height: 400px;
+  max-height: 430px;
+  height: 430px;
   position: relative;
   /* Remove overflow from chatbox, only messages will scroll */
   overflow: visible;
+}
+.chatbot-fullscreen-btn-row {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
 }
 
 .chatbot-messages {

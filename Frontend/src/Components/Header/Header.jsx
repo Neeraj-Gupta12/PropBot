@@ -2,6 +2,7 @@ import './Header.css';
 import { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getSuggestionProperties, chatbotProperties } from '../../redux/slices/propertiesSlice';
+import Properties from '../Property/properties.jsx';
 
 const PROPERTY_PRICES = [250000, 380000, 450000, 300000, 600000, 700000, 750000, 850000, 920000, 1200000];
 const PROPERTY_LOCATIONS = [
@@ -43,10 +44,14 @@ const initialBotMsg = {
 const Header = ({ onApplyFilters, scrollToPropertiesSection, setPropertiesHeading, ...props }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [chat, setChat] = useState([initialBotMsg]);
+  // Fullscreen state
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Get chatbot response and properties from Redux state
   const chatbotReply = useSelector(state => state.properties.chatbotMessage);
+  console.log("chatbotReply", chatbotReply);
   const chatbotProps = useSelector(state => state.properties.chatbotProperties);
+  console.log("chatbotProps", chatbotProps);
   const suggestionProperties = useSelector(state => state.properties.properties);
   const [showFilter, setShowFilter] = useState(false);
   const [filters, setFilters] = useState({
@@ -84,7 +89,7 @@ const Header = ({ onApplyFilters, scrollToPropertiesSection, setPropertiesHeadin
       { sender: "user", text: msg }
     ]);
     setSearchTerm("");
-    if (setPropertiesHeading) setPropertiesHeading(`Results for: ${cleanHeading(msg)}`);
+    if (setPropertiesHeading && chatbotProps.length>0) setPropertiesHeading(`Results for: ${cleanHeading(msg)}`);
     dispatch(chatbotProperties(msg));
   };
 
@@ -120,17 +125,31 @@ const Header = ({ onApplyFilters, scrollToPropertiesSection, setPropertiesHeadin
 
   // Listen for chatbot response and update chat
   useEffect(() => {
-    // Only add bot message if there is a new reply
-    if (chatbotReply !== null) {
-      setChat(prev => [
-        ...prev,
-        {
-          sender: 'bot',
-          text: chatbotReply || 'Here are some properties matching your query.',
-          properties: chatbotProps || [],
-          showViewProperties: chatbotProps && chatbotProps.length > 0
-        }
-      ]);
+    // Only add bot message, never update heading from chatbot message
+    if (chatbotReply !== null && Array.isArray(chatbotProps)) {
+      if (chatbotProps.length > 0) {
+        setChat(prev => [
+          ...prev,
+          {
+            sender: 'bot',
+            text: chatbotReply || 'Here are some properties matching your query.',
+            properties: chatbotProps,
+            showViewProperties: true
+          }
+        ]);
+        // Never update heading here
+      } else {
+        setChat(prev => [
+          ...prev,
+          {
+            sender: 'bot',
+            text: chatbotReply,
+            properties: [],
+            showViewProperties: false
+          }
+        ]);
+        // Never update heading here
+      }
     }
     // eslint-disable-next-line
   }, [chatbotReply, chatbotProps]);
@@ -187,69 +206,114 @@ const Header = ({ onApplyFilters, scrollToPropertiesSection, setPropertiesHeadin
   };
 
   return (
-    <div className="header">
-      <div className="chatbot-heading-section">
-        <h1 className="chatbot-main-heading">PropBot: Your Real Estate Home Finder</h1>
-        <p className="chatbot-desc">Welcome to PropBot! Your smart home-hunting assistant. Just chat your budget, location & needs — and get personalized property suggestions. Use filters for even better results!</p>
-      </div>
-      <div className="chatbot-chatbox">
-        <div className="chatbot-messages" ref={messagesEndRef}>
-          {chat.map((msg, idx) => (
-            msg.sender === 'bot' ? (
-              <div key={idx} className="chatbot-message bot">
-                <div className="chatbot-avatar-bubble">{BOT_AVATAR}</div>
-                <div className="chatbot-bubble bot-bubble">
-                  {msg.text.split('\n').map((line, i) => <div key={i}>{line}</div>)}
-                  {msg.showViewProperties && (
-                    <button
-                      onClick={() => scrollToPropertiesSection && scrollToPropertiesSection()}
-                      style={{marginTop:'10px',background:'#408de4',color:'#fff',border:'none',borderRadius:'16px',padding:'7px 22px',fontWeight:700,boxShadow:'0 2px 8px 0 rgba(64,141,228,0.10)',fontSize:'1rem',cursor:'pointer',transition:'background 0.2s'}}
-                    >
-                      View Properties
-                    </button>
-                  )}
-                </div>
+  <div className={`header${isFullscreen ? ' chatbot-fullscreen' : ''}`}> 
+
+      {/* Fullscreen close button (when fullscreen) */}
+      {isFullscreen && (
+        <button
+          className="chatbot-close-btn chatbot-close-btn-fullscreen"
+          onClick={() => setIsFullscreen(false)}
+          title="Close Fullscreen"
+        >
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" stroke="#408de4" strokeWidth="2"/><path d="M7 7l8 8M15 7l-8 8" stroke="#408de4" strokeWidth="1.5"/></svg>
+        </button>
+      )}
+
+      {/* Main content: split left (chatbot) and right (property cards) in fullscreen, else normal */}
+  <div className={`header-main-content${isFullscreen ? ' header-main-content-fullscreen' : ''}`}> 
+        {/* Left: Chatbox section, wider in fullscreen */}
+        <div
+          className={isFullscreen ? 'fullscreen-chatbox-left' : ''}
+        >
+            <div className="chatbot-heading-section chatbot-heading-section-fullscreen">
+              <h1 className="chatbot-main-heading">PropBot: Your Real Estate Home Finder</h1>
+              <p className="chatbot-desc">Welcome to PropBot! Your smart home-hunting assistant. Just chat your budget, location & needs — and get personalized property suggestions. Use filters for even better results!</p>
+            </div>
+          <div className={`chatbot-chatbox${isFullscreen ? ' chatbot-chatbox-fullscreen' : ''}`}> 
+            {/* Fullscreen button above welcome message, only for desktop/laptop and only if not already fullscreen */}
+            {!isFullscreen && (
+              <div className="chatbot-fullscreen-btn-row">
+                <button
+                  className="chatbot-fullscreen-btn"
+                  onClick={() => setIsFullscreen(true)}
+                  title="Expand Chatbot"
+                >
+                  <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="16" height="16" rx="4" stroke="#408de4" strokeWidth="2"/><path d="M7 7h2v2M15 7h-2v2M7 15h2v-2M15 15h-2v-2" stroke="#408de4" strokeWidth="1.5"/></svg>
+                </button>
               </div>
-            ) : (
-              <div key={idx} className="chatbot-message user">
-                <div className="chatbot-bubble user-bubble">
-                  {msg.text.split('\n').map((line, i) => <div key={i}>{line}</div>)}
-                </div>
-                <div className="chatbot-avatar-bubble">{USER_AVATAR}</div>
-              </div>
-            )
-          ))}
+            )}
+            <div className="chatbot-messages" ref={messagesEndRef}>
+              {chat.map((msg, idx) => (
+                msg.sender === 'bot' ? (
+                  <div key={idx} className="chatbot-message bot">
+                    <div className="chatbot-avatar-bubble">{BOT_AVATAR}</div>
+                    <div className="chatbot-bubble bot-bubble">
+                      {msg.text.split('\n').map((line, i) => <div key={i}>{line}</div>)}
+                      {msg.showViewProperties && (
+                        <button
+                          onClick={() => scrollToPropertiesSection && scrollToPropertiesSection()}
+                          style={{marginTop:'10px',background:'#408de4',color:'#fff',border:'none',borderRadius:'16px',padding:'7px 22px',fontWeight:700,boxShadow:'0 2px 8px 0 rgba(64,141,228,0.10)',fontSize:'1rem',cursor:'pointer',transition:'background 0.2s'}}
+                        >
+                          View Properties
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div key={idx} className="chatbot-message user">
+                    <div className="chatbot-bubble user-bubble">
+                      {msg.text.split('\n').map((line, i) => <div key={i}>{line}</div>)}
+                    </div>
+                    <div className="chatbot-avatar-bubble">{USER_AVATAR}</div>
+                  </div>
+                )
+              ))}
+            </div>
+            <div className="chatbot-predefined">
+              {PREDEFINED.map((p, i) => (
+                <button
+                  key={i}
+                  onClick={() => handleSuggestion(p)}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+            <div className="chatbot-search-bar">
+              <div className="chatbot-avatar">{BOT_AVATAR}</div>
+              <input
+                type="text"
+                placeholder="Type your message..."
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && handleSend(searchTerm)}
+              />
+              <button className="send-btn" onClick={() => handleSend(searchTerm)}>
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                  <path d="M2 11L20 2L11 20L10 13L2 11Z" fill="white"/>
+                </svg>
+              </button>
+              <button className="filter-btn" onClick={() => setShowFilter(true)}>
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                  <path d="M3 6h16M6 11h10M9 16h4" stroke="#408de4" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="chatbot-predefined">
-          {PREDEFINED.map((p, i) => (
-            <button
-              key={i}
-              onClick={() => handleSuggestion(p)}
-            >
-              {p}
-            </button>
-          ))}
-        </div>
-        <div className="chatbot-search-bar">
-          <div className="chatbot-avatar">{BOT_AVATAR}</div>
-          <input
-            type="text"
-            placeholder="Type your message..."
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && handleSend(searchTerm)}
-          />
-          <button className="send-btn" onClick={() => handleSend(searchTerm)}>
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-              <path d="M2 11L20 2L11 20L10 13L2 11Z" fill="white"/>
-            </svg>
-          </button>
-          <button className="filter-btn" onClick={() => setShowFilter(true)}>
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-              <path d="M3 6h16M6 11h10M9 16h4" stroke="#408de4" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-          </button>
-        </div>
+        {/* Right side: property cards placeholder in fullscreen, else nothing */}
+        {isFullscreen && (
+          <div
+            className="fullscreen-property-cards-right"
+          >
+            <div className="fullscreen-property-cards-grid">
+              <Properties 
+                properties={chatbotProps && chatbotProps.length ? chatbotProps : suggestionProperties} 
+                cardClassName="fullscreen-property-card-small"
+              />
+            </div>
+          </div>
+        )}
       </div>
       {showFilter && (
         <div className="chatbot-filter-popup" onClick={handlePopupBgClick}>

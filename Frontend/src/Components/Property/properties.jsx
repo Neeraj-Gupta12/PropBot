@@ -21,7 +21,8 @@ const PROPERTY_TYPES = [
 const CARDS_PER_ROW = 3;
 const ROWS = 3;
 const CARDS_PER_PAGE = CARDS_PER_ROW * ROWS;
-const Properties = ({ properties, heading = "Explore All Properties", scrollToOnChange = false }) => {
+
+const Properties = ({ properties, heading = "Explore Properties", scrollToOnChange = false, cardClassName = "" }) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const sectionRef = useRef(null);
@@ -66,11 +67,11 @@ const Properties = ({ properties, heading = "Explore All Properties", scrollToOn
               return (
                 <div
                   key={property.id || idx}
-                  className="homeproperties-card property-result-card"
+                  className={`homeproperties-card property-result-card ${cardClassName}`}
                   onClick={() => handleCardClick(property.id)}
                   style={{ cursor: "pointer", position: "relative" }}
                 >
-                  <div className="homeproperties-image-wrapper">
+                  <div className={`homeproperties-image-wrapper${cardClassName ? ' property-image-small' : ''}`}>
                     <img src={property.image} alt={property.title} />
                     <div className="property-type-badge">
                       <TypeIcon style={{ marginRight: 4 }} />

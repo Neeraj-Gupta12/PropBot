@@ -55,7 +55,10 @@ const Home = () => {
 
   const properties = useSelector((state) => {
     const stateProps = state.properties;
-    // If suggestionProperties is non-empty, show those, else show normal properties
+    // Priority: chatbotProperties > suggestionProperties > properties
+    if (stateProps.chatbotProperties && stateProps.chatbotProperties.length > 0) {
+      return stateProps.chatbotProperties;
+    }
     if (stateProps.suggestionProperties && stateProps.suggestionProperties.length > 0) {
       return stateProps.suggestionProperties;
     }

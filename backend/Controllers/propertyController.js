@@ -181,7 +181,6 @@ let savedIds = [];
 // Suggestion controller for chatbot predefined suggestions
 export const suggestionController = catchAsyncError(async (req, res, next) => {
   const { suggestion } = req.query;
-  console.log(suggestion, "suggestion from frontend");
   const PREDEFINED = [
     "Show me properties under $500,000",
     "I want a 3-bedrooms apartment in New York",
@@ -233,7 +232,6 @@ export const suggestionController = catchAsyncError(async (req, res, next) => {
     );
   }
   
-  console.log(filtered, "suggestion from backend");
   res.status(200).json({
     success: true,
     count: filtered.length,
@@ -241,25 +239,46 @@ export const suggestionController = catchAsyncError(async (req, res, next) => {
   });
 });
 
-// --- Property Chatbot Controller ---
-// Common chatbot responses
-const commonResponses = {
-  "hi": "Hello! How can I assist you with properties today?",
-  "hello": "Hi there! I am PropBot, developed by agent Mira. How can I help you?",
-  "hey": "Hey! How can I help you find your dream property?",
-  "my name is": "My name is PropBot, developed by agent Mira.",
-  "who are you": "I am PropBot, your professional property assistant developed by agent Mira.",
-  "help": "You can ask me to find properties by location, price, amenities, or any feature you want!",
-  "thank you": "You're welcome! Let me know if you need anything else.",
-  "thanks": "Glad to help!",
-  "bye": "Goodbye! Have a great day!"
-};
 
-// Helper: filter properties by keywords in any field
+
+// --- Property Chatbot Controller ---
+// Helper: filter properties by property type keyword (robust, supports variants)
 function filterPropertiesByMessage(message) {
-  const keywords = message.toLowerCase().split(/\s+/);
   const allProperties = mergePropertiesData();
-  return allProperties.filter(property => {
+  const msg = message.toLowerCase();
+  // Map of property types to their variants (add more as needed)
+  const typeVariants = {
+    apartment: ["apartment", "apartments", "appartment", "appartments", "allapartment", "allapartments", "apprtment", "aprtment", "aprtments"],
+    villa: ["villa", "villas", "vila", "villas"],
+    duplex: ["duplex", "duplexes", "duplx", "duplexx"],
+    penthouse: ["penthouse", "penthouses", "penthouz", "penthouze"],
+    studio: ["studio", "studios", "studi"],
+    condo: ["condo", "condos", "kondo", "kondos"],
+    house: ["house", "houses", "hous", "houz"],
+    townhouse: ["townhouse", "townhouses", "town house", "town houses"],
+    "smart home": ["smart home", "smarthome", "smart homes", "smarthomes"],
+    // Add more as needed
+  };
+  // Try to detect property type in message
+  let detectedType = null;
+  for (const [type, variants] of Object.entries(typeVariants)) {
+    if (variants.some(v => msg.includes(v))) {
+      detectedType = type;
+      break;
+    }
+  }
+  if (detectedType) {
+    // Only return properties matching this type (in title or type)
+    return allProperties.filter(p => {
+      const t = (p.type || "").toLowerCase();
+      const title = (p.title || "").toLowerCase();
+      // Strict: must match type or title (not partial match to avoid villa in apartment etc)
+      return t === detectedType || title.includes(detectedType);
+    });
+  }
+  // Fallback: old logic (broad match)
+  const keywords = msg.split(/\s+/);
+  const filtered = allProperties.filter(property => {
     return keywords.some(word =>
       Object.values(property).some(val =>
         typeof val === "string"
@@ -270,97 +289,344 @@ function filterPropertiesByMessage(message) {
       )
     );
   });
+  // If nothing matches, return empty array
+  return filtered.length > 0 ? filtered : [];
 }
-
 // Helper: create a short description for a property
 function propertyShortDesc(property) {
   return `${property.title} in ${property.location} for $${property.price}`;
 }
-
-// Main chatbot controller with NLP (compromise)
+// --- Property Chatbot Controller ---
 export const chatbotController = (req, res) => {
   const { message } = req.query;
   if (!message) {
-    return res.status(400).json({ message: "Message is required.", properties: [] });
+    return res.status(400).json({ 
+      message: "Please provide a property search query.", 
+      properties: [] 
+    });
   }
 
   const doc = nlp(message);
-  const lowerMsg = message.toLowerCase();
+  const lowerMsg = message.toLowerCase().trim();
 
-  // Detect greeting
-  const greetings = ["hi", "hello", "hey", "good morning", "good afternoon", "good evening"];
-  const isGreeting = greetings.some(greet => lowerMsg.includes(greet));
+  // --- Greeting Responses ---
+  const greetingsMap = [
+    { pattern: /^hi$/, response: "Hi! How can I help you with your property search today?" },
+    { pattern: /^hello$/, response: "Hello! Welcome to PropBot. How can I assist you?" },
+    { pattern: /^hey$/, response: "Hey there! Ready to find your dream home?" },
+    { pattern: /^good morning$/, response: "Good morning! How can I help you start your property journey today?" },
+    { pattern: /^good afternoon$/, response: "Good afternoon! Looking for a new place? I'm here to help." },
+    { pattern: /^good evening$/, response: "Good evening! How can I assist you with properties tonight?" },
+    { pattern: /^how are you\??$/, response: "Hello! I'm fine, thank you. How are you? Ready to explore some properties?" },
+    { pattern: /^what's up\??$|^whats up\??$/, response: "All good here! How can I help you with your property needs?" },
+    { pattern: /^yo$/, response: "Yo! Looking for a new home or investment?" },
+    { pattern: /^yup$/, response: "Hey! How can I help you today?" },
+    { pattern: /^namaste$/, response: "Namaste! How can I assist you in your property search?" },
+    { pattern: /^salaam$/, response: "Salaam! How can I help you today?" },
+    { pattern: /^good night$/, response: "Good night! If you need property info, I'm always here." },
+    { pattern: /^hey there$/, response: "Hey there! How can I help you with properties?" },
+    { pattern: /^hello there$/, response: "Hello there! How can I assist you?" },
+    { pattern: /^howdy$/, response: "Howdy! Looking for a new place?" },
+    { pattern: /^greetings$/, response: "Greetings! How can I help you today?" },
+    { pattern: /^bonjour$/, response: "Bonjour! How can I help you with your property search?" },
+    { pattern: /^hola$/, response: "Hola! How can I help you with your property search?" },
+    { pattern: /^hey bot$/, response: "Hey! I'm PropBot, your property assistant. How can I help?" },
+    { pattern: /^hello bot$/, response: "Hello! I'm PropBot, your property assistant. How can I help?" },
+    { pattern: /^how are you doing\??$/, response: "I'm doing great, thank you! How can I help you today?" },
+    { pattern: /^how is it going\??$/, response: "It's going well! How can I assist you with properties?" },
+    { pattern: /^how's it going\??$/, response: "All good here! How can I help you with your property needs?" },
+    { pattern: /^what's new\??$|^whats new\??$/, response: "I'm always learning new things about properties! How can I help you today?" },
+    { pattern: /^yo bot$/, response: "Yo! I'm PropBot. Ready to help you find a home." },
+    { pattern: /^hey propbot$/, response: "Hey! I'm PropBot. How can I help you today?" },
+    { pattern: /^hello propbot$/, response: "Hello! I'm PropBot. How can I help you today?" },
+    { pattern: /^hi propbot$/, response: "Hi! I'm PropBot. How can I help you today?" },
+    { pattern: /^hey assistant$/, response: "Hey! I'm your property assistant. How can I help?" },
+    { pattern: /^hello assistant$/, response: "Hello! I'm your property assistant. How can I help?" },
+    { pattern: /^hi assistant$/, response: "Hi! I'm your property assistant. How can I help?" },
+    { pattern: /^how are you propbot\??$/, response: "I'm great, thank you! How can I help you today?" },
+    { pattern: /^how are you assistant\??$/, response: "I'm great, thank you! How can I help you today?" },
+    { pattern: /^how are you doing propbot\??$/, response: "I'm doing well, thank you! How can I help you today?" },
+    { pattern: /^how are you doing assistant\??$/, response: "I'm doing well, thank you! How can I help you today?" },
+    { pattern: /^how are you today\??$/, response: "I'm good, thank you! How can I help you today?" },
+    { pattern: /^how are you feeling\??$/, response: "I'm feeling great and ready to help you!" },
+    { pattern: /^how's your day\??$/, response: "My day is going well! How can I help you?" },
+    { pattern: /^how's your night\??$/, response: "My night is going well! How can I help you?" },
+    { pattern: /^how's your morning\??$/, response: "My morning is going well! How can I help you?" },
+    { pattern: /^how's your afternoon\??$/, response: "My afternoon is going well! How can I help you?" },
+    { pattern: /^how's your evening\??$/, response: "My evening is going well! How can I help you?" },
+  ];
 
-  // Detect if user is telling their name
+  const greetingMatch = greetingsMap.find(g => g.pattern.test(lowerMsg.trim()));
+  if (greetingMatch) {
+    return res.json({ message: greetingMatch.response, properties: [] });
+  }
+
+  // --- Enhanced Helper Functions ---
+
+  // Improved bedroom extraction that ignores standalone numbers
+  function extractBedrooms(msg) {
+    // First check if this is part of a price query
+    if (/(?:price|cost|budget|\$|dollar|rs|inr|rupees|usd)\s+\d+/i.test(msg)) {
+      return null;
+    }
+    
+    // Match patterns like: "3 bedroom", "3br", "3 bhk", "3 beds"
+    const bedroomMatch = msg.match(/(\d+)\s*(?:bed|bedroom|bedrooms|br|bhk|beds|bed\s*room|bed\s*rooms)/i);
+    if (bedroomMatch) return Number(bedroomMatch[1]);
+    
+    // Match "of 3 bedrooms" only if not price context
+    const ofBedroomMatch = msg.match(/of\s+(\d+)\s*(?:bed|bedroom|bedrooms)/i);
+    if (ofBedroomMatch && !hasPriceContext(msg)) return Number(ofBedroomMatch[1]);
+    
+    return null;
+  }
+
+  // Check if message has price context
+  function hasPriceContext(msg) {
+    const priceKeywords = [
+      'price', 'cost', 'budget', 'dollar', 'rupee', 'rs', 'inr', 'usd',
+      'under', 'below', 'less than', 'upto', 'up to',
+      'above', 'over', 'more than', 'from',
+      '$', '₹', '€', '£'
+    ];
+    return new RegExp(`(?:^|\\s)(${priceKeywords.join('|')})(?:$|\\s)`, 'i').test(msg);
+  }
+
+  // More precise price extraction
+  function extractPrice(msg) {
+    if (!hasPriceContext(msg)) return null;
+
+    // Match patterns like: "$30000", "30000 dollars", "price 30000"
+    const priceMatch = msg.match(/(?:\$|₹|€|£|dollar|rupee|rs|inr|usd|price|cost|budget)\s*(\d[\d,.]*)|(\d[\d,.]*)\s*(?:dollar|rupee|rs|inr|usd)/i);
+    if (priceMatch) {
+      const amount = priceMatch[1] || priceMatch[2];
+      return parseFloat(amount.replace(/,/g, ''));
+    }
+    
+    // Match "of 30000" only with price context
+    const ofPriceMatch = msg.match(/of\s+(\d[\d,.]*)(?:\s*(?:dollar|rupee|rs|inr|usd))?/i);
+    if (ofPriceMatch && hasPriceContext(msg)) {
+      return parseFloat(ofPriceMatch[1].replace(/,/g, ''));
+    }
+    
+    return null;
+  }
+
+  function extractPriceType(msg) {
+    if (/(?:under|below|less than|upto|up to)/i.test(msg)) return "below";
+    if (/(?:above|over|more than|from)/i.test(msg)) return "above";
+    if (/(?:exactly|equal to|price of|at)/i.test(msg)) return "equal";
+    
+    // If $ or currency symbol is present with no range keyword, treat as exact
+    if (/(?:\$|₹|€|£|dollar|rupee|rs|inr|usd)/i.test(msg)) {
+      return "equal";
+    }
+    
+    return null;
+  }
+
+  // --- Property Filtering ---
+  const location = doc.places().out('array')[0];
+  const bedrooms = extractBedrooms(lowerMsg);
+  const priceValue = extractPrice(lowerMsg);
+  const priceType = extractPriceType(lowerMsg);
+  const bathrooms = extractBathrooms(lowerMsg);
+  const size = extractSize(lowerMsg);
+  const detectedType = detectPropertyType(lowerMsg);
+
+  let merged = mergePropertiesData();
+  let matchedProperties = [...merged];
+
+  // --- Special Case Handling ---
+  let botMessage = "";
   let name = null;
   if (lowerMsg.includes("my name is")) {
-    // Try to extract name after "my name is"
     const after = lowerMsg.split("my name is")[1];
     if (after) {
       name = after.trim().split(" ")[0];
     }
   } else {
-    // Try to extract a Person entity
     const people = doc.people().out('array');
     if (people.length > 0) {
       name = people[0];
     }
   }
 
-  // Extract preferences
-  const budget = doc.match('#Money').values().toNumber().out('array')[0];
-  const location = doc.places().out('array')[0];
-  const bedrooms = doc.match('#Value #Noun').values().toNumber().out('array')[0] || doc.match('#Cardinal').values().toNumber().out('array')[0];
-
-  // Professional, friendly responses
-  let botMessage = "";
-  if (isGreeting && name) {
-    botMessage = `Hello ${name.charAt(0).toUpperCase() + name.slice(1)}, I'm PropBot, your professional property assistant. How can I help you today?`;
-  } else if (isGreeting) {
-    botMessage = "Hello! I'm PropBot, your professional property assistant. How can I help you today?";
-  } else if (name) {
+  if (name) {
     botMessage = `Nice to meet you, ${name.charAt(0).toUpperCase() + name.slice(1)}! How can I assist you in finding your ideal property?`;
-  } else if (lowerMsg.includes("who are you")) {
+    return res.json({ message: botMessage, properties: [] });
+  } else if (lowerMsg.includes("who are you") || lowerMsg.includes("what is your name")) {
     botMessage = "I am PropBot, your professional property assistant developed by agent Mira. I can help you find properties based on your preferences.";
+  } else if (lowerMsg.includes("are you a bot") || lowerMsg.includes("are you real")) {
+    botMessage = "Yes, I'm an AI-powered assistant here to help you with all your property needs!";
+  } else if (lowerMsg.includes("who made you") || lowerMsg.includes("who created you")) {
+    botMessage = "I was developed by agent Mira to help users like you find the perfect property.";
+  } else if (lowerMsg.includes("thank you so much") || lowerMsg.includes("thanks a lot")) {
+    botMessage = "You're very welcome! If you need more help, just ask.";
   } else if (lowerMsg.includes("thank you") || lowerMsg.includes("thanks")) {
     botMessage = "You're welcome! Let me know if you need anything else.";
-  } else if (lowerMsg.includes("bye")) {
-    botMessage = "Goodbye! Have a great day!";
-  } else if (lowerMsg.includes("help")) {
-    botMessage = "You can ask me to find properties by location, price, amenities, or any feature you want!";
+  } else if (lowerMsg.includes("bye") || lowerMsg.includes("see you") || lowerMsg.includes("good night")) {
+    botMessage = "Goodbye! Have a great day! If you need property info, I'm always here.";
+  } else if (lowerMsg.includes("good morning")) {
+    botMessage = "Good morning! How can I help you start your property journey today?";
+  } else if (lowerMsg.includes("good afternoon")) {
+    botMessage = "Good afternoon! Looking for a new place? I'm here to help.";
+  } else if (lowerMsg.includes("good evening")) {
+    botMessage = "Good evening! How can I assist you with properties tonight?";
+  } else if (lowerMsg.includes("help") || lowerMsg.includes("what can you do") || lowerMsg.includes("how to use") || lowerMsg.includes("assist")) {
+    botMessage = "You can ask me to find properties by location, price, amenities, or any feature you want! Try messages like 'Show me apartments in Dallas under $500,000' or 'Find villas with a swimming pool.'";
   }
 
-  // If user asks for property preferences
-  let matchedProperties = [];
-  if (budget || location || bedrooms) {
-    // Use extracted preferences to filter
-    let merged = mergePropertiesData();
-    matchedProperties = merged.filter(p => {
-      let match = true;
-      if (budget) match = match && p.price <= budget;
-      if (location) match = match && p.location && p.location.toLowerCase().includes(location.toLowerCase());
-      if (bedrooms) match = match && Number(p.bedrooms) === Number(bedrooms);
-      return match;
-    });
-    if (!botMessage) {
-      botMessage = `Here are some properties matching your preferences${location ? ` in ${location}` : ''}${bedrooms ? ` with ${bedrooms} bedrooms` : ''}${budget ? ` under $${budget}` : ''}.`;
-    }
-  } else {
-    // Fallback: filter by keywords in message
-    matchedProperties = filterPropertiesByMessage(message);
-    if (!botMessage) {
-      if (matchedProperties.length > 0) {
-        botMessage = `Here are some properties matching your query.`;
-      } else {
-        botMessage = "Sorry, I couldn't find any properties matching your request. Please try different keywords.";
-      }
+  if (botMessage) {
+    return res.json({ message: botMessage, properties: [] });
+  }
+
+  // Apply filters in specific order
+  if (detectedType) {
+    matchedProperties = matchedProperties.filter(p => 
+      p.type?.toLowerCase() === detectedType || 
+      p.title?.toLowerCase().includes(detectedType)
+    );
+  }
+
+  if (bedrooms) {
+    matchedProperties = matchedProperties.filter(p => Number(p.bedrooms) === Number(bedrooms));
+  }
+
+  if (priceValue) {
+    const priceFilterType = priceType || "equal"; // Default to exact match if no type specified
+    
+    if (priceFilterType === "below") {
+      matchedProperties = matchedProperties.filter(p => p.price <= priceValue);
+    } else if (priceFilterType === "above") {
+      matchedProperties = matchedProperties.filter(p => p.price >= priceValue);
+    } else {
+      matchedProperties = matchedProperties.filter(p => p.price === priceValue);
     }
   }
-  console.log("Matched Properties:", matchedProperties);
-  console.log("botMessage:", botMessage);
-  // Always return properties (even if empty)
+
+  if (location) {
+    matchedProperties = matchedProperties.filter(p => 
+      p.location?.toLowerCase().includes(location.toLowerCase())
+    );
+  }
+
+  if (bathrooms) {
+    matchedProperties = matchedProperties.filter(p => Number(p.bathrooms) === Number(bathrooms));
+  }
+
+  if (size) {
+    matchedProperties = matchedProperties.filter(p => Number(p.size_sqft) === Number(size));
+  }
+
+  // --- Generate Professional Response ---
+  if (/^\d+$/.test(message.trim())) {
+    const number = parseInt(message.trim());
+    if (number > 1000) {
+      botMessage = `I see you mentioned ${number}. Could you please clarify:\n` +
+                  `- Is this a price (e.g., $${number})?\n` +
+                  `- Square footage?\n` +
+                  `- Number of bedrooms?\n` +
+                  `For better results, please include details like:\n` +
+                  `- Property type (apartment, villa, etc.)\n` +
+                  `- Location\n` +
+                  `- Amenities you're looking for`;
+      return res.json({ message: botMessage, properties: [] });
+    }
+  }
+
+  // Handle simple bedroom queries
+  if (bedrooms && !priceValue && !detectedType && !location) {
+    if (matchedProperties.length === 0) {
+      botMessage = `I couldn't find properties with ${bedrooms} bedroom${bedrooms > 1 ? 's' : ''}.\n` +
+                   `Would you like to specify:\n` +
+                   `- A location (e.g., "in New York")\n` +
+                   `- A property type (e.g., "apartment" or "villa")\n` +
+                   `- A price range (e.g., "under $500,000")`;
+    } else {
+      botMessage = `Here are properties with ${bedrooms} bedroom${bedrooms > 1 ? 's' : ''}.\n` +
+                   `You can refine your search by adding:\n` +
+                   `- Location (e.g., "in Chicago")\n` +
+                   `- Price (e.g., "under $300,000")\n` +
+                   `- Property type (e.g., "condo")`;
+    }
+  }
+  // Handle all other cases
+  else {
+    const filters = [];
+    if (detectedType) filters.push(detectedType);
+    if (bedrooms) filters.push(`${bedrooms} bedroom${bedrooms > 1 ? 's' : ''}`);
+    if (priceValue) {
+      filters.push(`${priceType === "below" ? 'under' : priceType === "above" ? 'above' : 'at'} $${priceValue.toLocaleString()}`);
+    }
+    if (location) filters.push(`in ${location}`);
+    if (bathrooms) filters.push(`${bathrooms} bathroom${bathrooms > 1 ? 's' : ''}`);
+    if (size) filters.push(`${size} sqft`);
+
+    if (filters.length > 0) {
+      if (matchedProperties.length === 0) {
+        botMessage = `No properties found with ${filters.join(' ')}.\n` +
+                     `Suggestions:\n` +
+                     `- Broaden your search criteria\n` +
+                     `- Check nearby locations\n` +
+                     `- Adjust price range`;
+      } else {
+        botMessage = `Found ${matchedProperties.length} properties with ${filters.join(' ')}:`;
+      }
+    } else {
+      botMessage = matchedProperties.length > 0 
+        ? "Here are some properties matching your query:"
+        : "I couldn't find matching properties. Please try:\n" +
+          "- Different search terms\n" +
+          "- Fewer filters\n" +
+          "- Checking for typos";
+    }
+  }
+  // If no properties matched, return a helpful message and empty array
+  if (matchedProperties.length === 0) {
+    return res.json({
+      message: "Koi property aapki query se match nahi hui. Kripya apni query ko aur specific banaye ya naye shabd try kare.",
+      properties: []
+    });
+  }
+  console.log("matchedProperties:", matchedProperties);
   return res.json({
     message: botMessage,
     properties: matchedProperties
   });
 };
+
+// Helper: detect property type with variants
+function detectPropertyType(msg) {
+  const typeVariants = {
+    apartment: ["apartment", "apartments", "apt", "apts"],
+    villa: ["villa", "villas"],
+    duplex: ["duplex", "duplexes"],
+    penthouse: ["penthouse", "penthouses"],
+    studio: ["studio", "studios"],
+    condo: ["condo", "condos"],
+    house: ["house", "houses"],
+    townhouse: ["townhouse", "townhouses", "town home"],
+    "smart home": ["smart home", "smarthome"]
+  };
+
+  for (const [type, variants] of Object.entries(typeVariants)) {
+    const regex = new RegExp(`\\b(?:${variants.join('|')})\\b`, 'i');
+    if (regex.test(msg)) {
+      return type;
+    }
+  }
+  return null;
+}
+
+// Helper: extract bathrooms
+function extractBathrooms(msg) {
+  const match = msg.match(/(\d+)\s*(?:bath|bathroom|bathrooms|baths|ba|bth)/i);
+  return match ? Number(match[1]) : null;
+}
+
+// Helper: extract size
+function extractSize(msg) {
+  const match = msg.match(/(\d+)\s*(?:sqft|sq ft|square feet|sqm|sq m)/i);
+  return match ? Number(match[1]) : null;
+}

@@ -1,3 +1,45 @@
+/* Small card style for fullscreen right side */
+.fullscreen-property-card-small {
+  min-width: 170px !important;
+  max-width: 200px !important;
+  width: 100% !important;
+  height: 220px !important;
+  border-radius: 10px !important;
+  font-size: 0.92rem !important;
+}
+.fullscreen-property-card-small .homeproperties-info {
+  padding: 0.5rem 0.5rem 0.5rem 0.5rem !important;
+  gap: 0.2rem !important;
+}
+.fullscreen-property-card-small .homeproperties-info h3 {
+  font-size: 0.92rem !important;
+}
+.fullscreen-property-card-small .homeproperties-details {
+  font-size: 0.8rem !important;
+}
+.fullscreen-property-card-small .homeproperties-location {
+  font-size: 0.7rem !important;
+}
+.fullscreen-property-card-small .homeproperties-price {
+  font-size: 0.9rem !important;
+}
+.fullscreen-property-card-small .homeproperties-priceval {
+  font-size: 0.9rem !important;
+}
+.fullscreen-property-card-small .wishlist-btn {
+  font-size: 1rem !important;
+}
+.property-image-small {
+  height: 80px !important;
+  min-height: 80px !important;
+  max-height: 80px !important;
+}
+.property-image-small img {
+  height: 80px !important;
+  min-height: 80px !important;
+  max-height: 80px !important;
+  object-fit: cover !important;
+}
 /* Responsive styles for Properties component */
 .homeproperties-section {
   padding: 2rem 4vw;
