@@ -40,7 +40,7 @@ const initialBotMsg = {
   text: "👋 Hi! I'm your real estate assistant. Tell me about your dream home—your budget, preferred location, number of bedrooms/bathrooms, and any must-have amenities. Or use filters to get started!"
 };
 
-const Header = ({ onApplyFilters, scrollToPropertiesSection, ...props }) => {
+const Header = ({ onApplyFilters, scrollToPropertiesSection, setPropertiesHeading, ...props }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [chat, setChat] = useState([initialBotMsg]);
 
@@ -72,6 +72,11 @@ const Header = ({ onApplyFilters, scrollToPropertiesSection, ...props }) => {
 
 
   // Handle normal user message (chatbot)
+  // Utility to clean heading
+  const cleanHeading = (str) => {
+    return str.replace(/^(Show me|I want a|Find|Show me)\s*/i, '').trim();
+  };
+
   const handleSend = async (msg) => {
     if (!msg.trim()) return;
     setChat(prev => [
@@ -79,6 +84,7 @@ const Header = ({ onApplyFilters, scrollToPropertiesSection, ...props }) => {
       { sender: "user", text: msg }
     ]);
     setSearchTerm("");
+    if (setPropertiesHeading) setPropertiesHeading(`Results for: ${cleanHeading(msg)}`);
     dispatch(chatbotProperties(msg));
   };
 
@@ -92,6 +98,7 @@ const Header = ({ onApplyFilters, scrollToPropertiesSection, ...props }) => {
       { sender: "user", text: suggestion }
     ]);
     setActiveSuggestion(suggestion);
+    if (setPropertiesHeading) setPropertiesHeading(cleanHeading(suggestion));
     dispatch(getSuggestionProperties(suggestion));
   };
 

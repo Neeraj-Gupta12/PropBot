@@ -18,12 +18,14 @@ const Home = () => {
   const dispatch = useDispatch();
   const [appliedFilters, setAppliedFilters] = useState(null);
   const [filterHeading, setFilterHeading] = useState("Explore All Properties");
+  const [propertiesHeading, setPropertiesHeading] = useState("Explore All Properties");
   const [scrollToProperties, setScrollToProperties] = useState(false);
 
   useEffect(() => {
     if (!appliedFilters) {
       dispatch(getAllProperties());
       setFilterHeading("Explore All Properties");
+      setPropertiesHeading("Explore All Properties");
       setScrollToProperties(false);
     } else {
       dispatch(filterProperties(appliedFilters));
@@ -45,6 +47,7 @@ const Home = () => {
       }
       const heading = headingParts.length > 0 ? `Homes ${headingParts.join(" ")}` : "Filtered Properties";
       setFilterHeading(heading);
+      setPropertiesHeading(heading);
       setScrollToProperties(true);
     }
     // eslint-disable-next-line
@@ -87,9 +90,10 @@ const Home = () => {
         setActiveButton={setActiveButton}
         onApplyFilters={handleApplyFilters}
         scrollToPropertiesSection={scrollToPropertiesSection}
+        setPropertiesHeading={setPropertiesHeading}
       />
       <div className="home-section-container" ref={propertiesSectionRef}>
-        <Properties properties={properties} heading={filterHeading} scrollToOnChange={scrollToProperties} />
+        <Properties properties={properties} heading={propertiesHeading} scrollToOnChange={scrollToProperties} />
       </div>
     </div>
   );

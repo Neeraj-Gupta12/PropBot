@@ -1,7 +1,6 @@
 
 import mongoose from "mongoose";
 import User from "../Modals/userModal.js";
-import Property from "../Modals/propertylModal.js";
 import property_basics from "../data/property_basics.json" with { type: "json" };
 import property_characteristics from "../data/property_characteristics.json" with { type: "json" };
 import property_images from "../data/property_images.json" with { type: "json" };
