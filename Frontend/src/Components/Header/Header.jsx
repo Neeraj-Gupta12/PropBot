@@ -251,6 +251,7 @@ const Header = ({ onApplyFilters, scrollToPropertiesSection, setPropertiesHeadin
                       {msg.text.split('\n').map((line, i) => <div key={i}>{line}</div>)}
                       {msg.showViewProperties && (
                         <button
+                          className="view-properties-btn"
                           onClick={() => scrollToPropertiesSection && scrollToPropertiesSection()}
                           style={{marginTop:'10px',background:'#408de4',color:'#fff',border:'none',borderRadius:'16px',padding:'7px 22px',fontWeight:700,boxShadow:'0 2px 8px 0 rgba(64,141,228,0.10)',fontSize:'1rem',cursor:'pointer',transition:'background 0.2s'}}
                         >

@@ -45,7 +45,7 @@ const Home = () => {
       if (appliedFilters.amenities?.length > 0) {
         headingParts.push(`with ${appliedFilters.amenities.join(" & ")}`);
       }
-      const heading = headingParts.length > 0 ? `Homes ${headingParts.join(" ")}` : "Filtered Properties";
+      const heading = headingParts.length > 0 ? `Filters applied: ${headingParts.join(" ")}` : "Filters applied:";
       setFilterHeading(heading);
       setPropertiesHeading(heading);
       setScrollToProperties(true);
@@ -53,15 +53,23 @@ const Home = () => {
     // eslint-disable-next-line
   }, [dispatch, appliedFilters]);
 
+
+  // Always show the most recently updated properties (chatbot, suggestion, or filter)
   const properties = useSelector((state) => {
     const stateProps = state.properties;
-    // Priority: chatbotProperties > suggestionProperties > properties
+    // If filters are applied, always show filtered properties
+    if (appliedFilters && stateProps.properties && stateProps.properties.length > 0) {
+      return stateProps.properties;
+    }
+    // If chatbot query was made, show chatbotProperties
     if (stateProps.chatbotProperties && stateProps.chatbotProperties.length > 0) {
       return stateProps.chatbotProperties;
     }
+    // If predefined suggestion was clicked, show suggestionProperties
     if (stateProps.suggestionProperties && stateProps.suggestionProperties.length > 0) {
       return stateProps.suggestionProperties;
     }
+    // Default: all properties
     return stateProps.properties || [];
   });
 

@@ -66,22 +66,44 @@ export const filteredProperties = catchAsyncError(async (req, res, next) => {
     keyword
   } = req.query;
   if (location) {
-    // Support multiple locations: array or comma-separated string
-    let locationArr = [];
-    if (Array.isArray(location)) {
-      locationArr = location;
-    } else if (typeof location === 'string') {
-      locationArr = location.split(',').map(l => l.trim()).filter(Boolean);
-    }
-    if (locationArr.length > 0) {
-      results = results.filter((p) =>
-        p.location && locationArr.some(loc => p.location.toLowerCase().includes(loc.toLowerCase()))
-      );
-    } else {
-      // fallback to single location string
-      results = results.filter((p) => p.location && p.location.toLowerCase().includes(location.toLowerCase()));
-    }
+  // Support multiple locations: array or comma-separated string
+  let locationArr = [];
+  if (Array.isArray(location)) {
+    locationArr = location;
+  } else if (typeof location === 'string') {
+    locationArr = location.split(',').map(l => l.trim()).filter(Boolean);
   }
+  
+  if (locationArr.length > 0) {
+    results = results.filter((p) => {
+      if (!p.location) return false;
+      
+      // Normalize both the property location and search terms
+      const propLoc = p.location.toLowerCase();
+      
+      return locationArr.some(searchLoc => {
+        const normSearchLoc = searchLoc.toLowerCase();
+        
+        // Check different matching possibilities
+        return (
+          propLoc === normSearchLoc || // Exact match
+          propLoc.startsWith(normSearchLoc.split(',')[0]) || // "New York" matches "New York, NY"
+          normSearchLoc.startsWith(propLoc.split(',')[0]) // "New York, NY" matches "New York"
+        );
+      });
+    });
+  } else {
+    // fallback to single location string
+    const searchLoc = location.toLowerCase();
+    results = results.filter((p) => 
+      p.location && (
+        p.location.toLowerCase() === searchLoc ||
+        p.location.toLowerCase().startsWith(searchLoc.split(',')[0]) ||
+        searchLoc.startsWith(p.location.toLowerCase().split(',')[0])
+      )
+    );
+  }
+}
   if (minPrice) {
     results = results.filter((p) => p.price >= Number(minPrice));
   }
@@ -360,7 +382,23 @@ export const chatbotController = (req, res) => {
   }
 
 
-  // --- Enhanced Helper Functions ---
+
+  // Helper: extract property IDs from message (e.g., 'id 1 and 3', 'id: 2, 5')
+  function extractPropertyIds(msg) {
+    // Match patterns like 'id 1', 'id 1 and 3', 'id: 2, 5', 'ids 1,2,3'
+    const idPattern = /id[s]?\s*[:]?\s*((\d+[ ,and]*)+)/i;
+    const match = msg.match(idPattern);
+    if (match && match[1]) {
+      // Split by comma, 'and', or space
+      return match[1]
+        .split(/,|and|\s+/)
+        .map(s => s.trim())
+        .filter(Boolean)
+        .map(Number)
+        .filter(n => !isNaN(n));
+    }
+    return [];
+  }
 
   // Helper: extract amenities from message
   function extractAmenities(msg) {
@@ -443,6 +481,7 @@ export const chatbotController = (req, res) => {
 
   // --- Property Filtering ---
 
+
   const location = doc.places().out('array')[0];
   const bedrooms = extractBedrooms(lowerMsg);
   const priceValue = extractPrice(lowerMsg);
@@ -451,9 +490,10 @@ export const chatbotController = (req, res) => {
   const size = extractSize(lowerMsg);
   const detectedType = detectPropertyType(lowerMsg);
   const amenities = extractAmenities(lowerMsg);
+  const propertyIds = extractPropertyIds(lowerMsg);
 
   // NEW: Check if the query is gibberish (no meaningful filters detected)
-  const isGibberishQuery = !location && !bedrooms && !priceValue && !bathrooms && !size && !detectedType && amenities.length === 0;
+  const isGibberishQuery = !location && !bedrooms && !priceValue && !bathrooms && !size && !detectedType && amenities.length === 0 && propertyIds.length === 0;
 
   let merged = mergePropertiesData();
   let matchedProperties = [...merged];
@@ -513,50 +553,60 @@ export const chatbotController = (req, res) => {
   }
 
 
-  // Apply filters in specific order
-  if (detectedType) {
-    matchedProperties = matchedProperties.filter(p => 
-      p.type?.toLowerCase() === detectedType || 
-      p.title?.toLowerCase().includes(detectedType)
-    );
-  }
-
-  if (bedrooms) {
-    matchedProperties = matchedProperties.filter(p => Number(p.bedrooms) === Number(bedrooms));
-  }
-
-  if (priceValue) {
-    const priceFilterType = priceType || "equal"; // Default to exact match if no type specified
-    if (priceFilterType === "below") {
-      matchedProperties = matchedProperties.filter(p => p.price <= priceValue);
-    } else if (priceFilterType === "above") {
-      matchedProperties = matchedProperties.filter(p => p.price >= priceValue);
-    } else {
-      matchedProperties = matchedProperties.filter(p => p.price === priceValue);
+  // --- Direct title match: if user's message matches a property title, return that property only ---
+  const exactTitleMatch = merged.find(p => p.title && p.title.toLowerCase() === lowerMsg);
+  let usedIdFilter = false;
+  if (exactTitleMatch) {
+    matchedProperties = [exactTitleMatch];
+  } else if (typeof extractPropertyIds === 'function' && propertyIds && propertyIds.length > 0) {
+    matchedProperties = merged.filter(p => propertyIds.includes(Number(p.id)));
+    usedIdFilter = true;
+  } else {
+    // Apply filters in specific order
+    if (detectedType) {
+      matchedProperties = matchedProperties.filter(p => 
+        p.type?.toLowerCase() === detectedType || 
+        p.title?.toLowerCase().includes(detectedType)
+      );
     }
-  }
 
-  if (location) {
-    matchedProperties = matchedProperties.filter(p => 
-      p.location?.toLowerCase().includes(location.toLowerCase())
-    );
-  }
+    if (bedrooms) {
+      matchedProperties = matchedProperties.filter(p => Number(p.bedrooms) === Number(bedrooms));
+    }
 
-  if (bathrooms) {
-    matchedProperties = matchedProperties.filter(p => Number(p.bathrooms) === Number(bathrooms));
-  }
+    if (priceValue) {
+      const priceFilterType = priceType || "equal"; // Default to exact match if no type specified
+      if (priceFilterType === "below") {
+        matchedProperties = matchedProperties.filter(p => p.price <= priceValue);
+      } else if (priceFilterType === "above") {
+        matchedProperties = matchedProperties.filter(p => p.price >= priceValue);
+      } else {
+        matchedProperties = matchedProperties.filter(p => p.price === priceValue);
+      }
+    }
 
-  if (size) {
-    matchedProperties = matchedProperties.filter(p => Number(p.size_sqft) === Number(size));
-  }
+    if (location) {
+      matchedProperties = matchedProperties.filter(p => 
+        p.location?.toLowerCase().includes(location.toLowerCase())
+      );
+    }
 
-  // --- Amenities filter ---
-  if (amenities.length > 0) {
-    matchedProperties = matchedProperties.filter(p =>
-      Array.isArray(p.amenities) && amenities.every(a =>
-        p.amenities.some(pa => pa.toLowerCase() === a.toLowerCase())
-      )
-    );
+    if (bathrooms) {
+      matchedProperties = matchedProperties.filter(p => Number(p.bathrooms) === Number(bathrooms));
+    }
+
+    if (size) {
+      matchedProperties = matchedProperties.filter(p => Number(p.size_sqft) === Number(size));
+    }
+
+    // --- Amenities filter ---
+    if (amenities.length > 0) {
+      matchedProperties = matchedProperties.filter(p =>
+        Array.isArray(p.amenities) && amenities.every(a =>
+          p.amenities.some(pa => pa.toLowerCase() === a.toLowerCase())
+        )
+      );
+    }
   }
 
   // --- Generate Professional Response ---
@@ -604,7 +654,13 @@ export const chatbotController = (req, res) => {
     if (size) filters.push(`${size} sqft`);
     if (amenities.length > 0) filters.push(`with ${amenities.join(", ")}`);
 
-    if (filters.length > 0) {
+    if (usedIdFilter) {
+      if (matchedProperties.length === 0) {
+        botMessage = `No properties found with IDs: ${propertyIds.join(", ")}.`;
+      } else {
+        botMessage = `Found ${matchedProperties.length} propert${matchedProperties.length === 1 ? 'y' : 'ies'} with IDs: ${propertyIds.join(", ")}`;
+      }
+    } else if (filters.length > 0) {
       if (matchedProperties.length === 0) {
         botMessage = `No properties found with ${filters.join(' ')}.\n` +
                      `Suggestions:\n` +
