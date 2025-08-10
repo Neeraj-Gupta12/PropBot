@@ -63,36 +63,23 @@ const PropertyDetail = () => {
         )}
         {!loading && property && (
           <>
-            <div className="property-detail-header" style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:16}}>
-              <span>{property.title}</span>
+            <div className="property-detail-header property-detail-header-flex">
+              <span className="property-detail-title">{property.title}</span>
               <button
                 className={`compare-btn${isCompared ? ' compared' : ''}`}
                 onClick={handleCompareClick}
                 disabled={isCompareDisabled}
-                style={{
-                  marginLeft: 'auto',
-                  background: isCompared ? '#e74c3c' : '#408de4',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: 6,
-                  padding: '8px 18px',
-                  fontWeight: 600,
-                  fontSize: 15,
-                  cursor: isCompareDisabled ? 'not-allowed' : 'pointer',
-                  opacity: isCompareDisabled ? 0.6 : 1,
-                  transition: 'background 0.2s',
-                }}
               >
                 {isCompared ? 'Remove from Compare' : isCompareDisabled ? 'Max 3 properties' : 'Add to Compare'}
               </button>
             </div>
             <div className="property-detail-meta">
               <div className="property-detail-location">
-                <FaMapMarkerAlt style={{ marginRight: 6, color: "#408de4" }} />
+                <FaMapMarkerAlt className="property-detail-location-icon" />
                 {property.location}
               </div>
               <div className="property-detail-price">
-                Price: <span style={{ fontWeight: 600 }}>${property.price}</span>
+                Price: <span className="property-detail-priceval">${property.price}</span>
               </div>
             </div>
             {/* Compare button now in header */}
@@ -105,9 +92,9 @@ const PropertyDetail = () => {
             </div>
             <div className="property-detail-info">
               <div className="property-detail-stats">
-                <span title="Bedrooms"><FaBed style={{ marginRight: 4, color: '#4e4e4e' }} /> {property.bedrooms} Bedrooms</span>
-                <span title="Bathrooms"><FaBath style={{ margin: '0 8px 0 16px', color: '#4e4e4e' }} /> {property.bathrooms} Bathrooms</span>
-                <span title="Size"><FaRulerCombined style={{ margin: '0 8px 0 16px', color: '#4e4e4e' }} /> {property.size_sqft} sqft</span>
+                <span title="Bedrooms"><FaBed className="property-detail-icon property-detail-bed" /> {property.bedrooms} Bedrooms</span>
+                <span title="Bathrooms"><FaBath className="property-detail-icon property-detail-bath" /> {property.bathrooms} Bathrooms</span>
+                <span title="Size"><FaRulerCombined className="property-detail-icon property-detail-size" /> {property.size_sqft} sqft</span>
               </div>
               {property.amenities && property.amenities.length > 0 && (
                 <div className="property-detail-amenities">

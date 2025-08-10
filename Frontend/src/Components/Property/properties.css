@@ -1,3 +1,77 @@
+/* Responsive styles for Properties component */
+.homeproperties-section {
+  padding: 2rem 4vw;
+}
+.homeproperties-header h2 {
+  font-size: 2rem;
+}
+.homeproperties-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+.homeproperties-card {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.homeproperties-card:hover {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+}
+.homeproperties-image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+}
+.homeproperties-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.homeproperties-info {
+  padding: 1rem 1.2rem 1.2rem 1.2rem;
+}
+.wishlist-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.wishlist-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: #e74c3c;
+  transition: color 0.2s;
+}
+.wishlist-btn.active {
+  color: #e74c3c;
+}
+.homeproperties-location {
+  color: #408de4;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.homeproperties-details {
+  font-size: 0.98rem;
+  color: #555;
+  margin-bottom: 0.7rem;
+}
+.homeproperties-price {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.homeproperties-priceval {
+  color: #1a3c34;
+  font-size: 1.2rem;
+}
 .homeproperties-section {
   margin: 2rem 0;
   background: #f8f7f7;
@@ -59,7 +133,7 @@
   left: 10px;
   background: rgba(77, 189, 214, 0.9);
   color: white;
-  padding: 4px 10px;
+  padding: 2px 7px;
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 600;
@@ -181,7 +255,7 @@
 @media (max-width: 1200px) {
   .homeproperties-grid.properties-results-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    gap: 2rem;
   }
   .property-result-card {
     min-width: 220px;
@@ -204,7 +278,8 @@
   }
   .homeproperties-grid.properties-results-grid {
     grid-template-columns: 1fr;
-    gap: 0.7rem;
+    gap: 2rem;
+    justify-items: center;
   }
   .property-result-card {
     min-width: 150px;
@@ -243,8 +318,8 @@
 }
 @media (max-width: 768px) {
   .homeproperties-section {
-    width: 99vw;
-    max-width: 100vw;
+    width: 80vw;
+    max-width: 80vw;
     padding: 0.5rem 0.2rem 0.2rem 0.2rem;
     margin: 0.5rem 0;
   }
@@ -253,7 +328,7 @@
   }
   .homeproperties-grid.properties-results-grid {
     grid-template-columns: 1fr;
-    gap: 0.4rem;
+    gap: 2rem;
   }
   .property-result-card {
     min-width: 120px;
@@ -262,7 +337,7 @@
     font-size: 0.85rem;
   }
   .homeproperties-image-wrapper {
-    height: 70px;
+    height: 250px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
   }
@@ -275,18 +350,23 @@
     gap: 0.2rem;
   }
   .homeproperties-info h3 {
-    font-size: 0.7rem;
+    font-size: 1.2rem;
   }
   .homeproperties-details {
-    font-size: 0.7rem;
+    font-size: 0.9rem;
   }
   .homeproperties-location {
-    font-size: 0.7rem;
+    font-size: 0.9rem;
   }
   .homeproperties-price {
-    font-size: 0.8rem;
+    font-size: 1.1rem;
   }
   .homeproperties-priceval {
-    font-size: 0.8rem;
+    font-size: 1.1rem;
+  }
+  .homeproperties-title {
+    font-size: 1.2rem !important;
+    font-weight: 700;
+    margin-bottom: 1rem;
   }
 }

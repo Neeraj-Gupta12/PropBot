@@ -50,7 +50,7 @@ const Properties = ({ properties, heading = "Explore All Properties", scrollToOn
   return (
     <section className="homeproperties-section" ref={sectionRef}>
       <div className="homeproperties-header">
-        <h2>{heading}</h2>
+        <h2 className="homeproperties-title">{heading}</h2>
       </div>
       {Array.isArray(properties) && properties.length === 0 ? (
         <CardLoader count={4} />

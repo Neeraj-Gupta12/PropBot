@@ -1,3 +1,124 @@
+/* Responsive styles for CompareBar */
+.compare-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #1a3c34;
+  color: #fff;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 2vw;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.13);
+  font-size: 1.1rem;
+}
+.compare-bar-list {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  flex: 1;
+}
+.compare-bar-item {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  color: #1a3c34;
+  border-radius: 0.7rem;
+  padding: 0.2rem 0.7rem 0.2rem 0.2rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  margin-right: 0.5rem;
+  min-width: 0;
+}
+.compare-bar-img {
+  width: 48px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 0.4rem;
+  margin-right: 0.5rem;
+}
+.compare-bar-title {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-right: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90px;
+}
+.compare-bar-remove {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-left: 0.2rem;
+}
+.compare-bar-btn {
+  background: #408de4;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  margin-left: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.compare-bar-btn:disabled {
+  background: #b0b0b0;
+  cursor: not-allowed;
+}
+.compare-bar-clear {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  margin-left: 0.7rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+@media (max-width: 700px) {
+  .compare-bar {
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem 1vw 0.7rem 1vw;
+    font-size: 0.95rem;
+  }
+  .compare-bar-list {
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    justify-content: flex-start;
+  }
+  .compare-bar-item {
+    flex-direction: column;
+    align-items: center;
+    padding: 0.2rem 0.2rem 0.2rem 0.2rem;
+    margin-right: 0.2rem;
+    min-width: 0;
+    background: #fff;
+    color: #1a3c34;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .compare-bar-img {
+    width: 38px;
+    height: 28px;
+    margin: 0;
+    margin-bottom: 0.1rem;
+  }
+  .compare-bar-title, .compare-bar-remove {
+    display: none;
+  }
+  .compare-bar-btn, .compare-bar-clear {
+    width: 100%;
+    margin: 0.2rem 0 0.2rem 0;
+    font-size: 1rem;
+    padding: 0.6rem 0;
+  }
+}
 .compare-bar {
   position: fixed;
   left: 0;
@@ -23,48 +144,63 @@
   padding: 4px 8px;
   position: relative;
 }
-.compare-bar-img {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-  border-radius: 4px;
-  margin-right: 8px;
-}
-.compare-bar-title {
-  font-size: 14px;
-  max-width: 120px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.compare-bar-remove {
-  background: none;
-  border: none;
-  color: #e74c3c;
-  font-size: 18px;
-  margin-left: 8px;
-  cursor: pointer;
-}
-.compare-bar-btn {
-  background: #408de4;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 20px;
-  font-size: 16px;
-  margin-left: 24px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.compare-bar-btn:disabled {
-  background: #b3c6e4;
-  cursor: not-allowed;
-}
-.compare-bar-clear {
-  background: none;
-  border: none;
-  color: #888;
-  margin-left: 16px;
-  cursor: pointer;
-  font-size: 14px;
-}
+  @media (max-width: 700px) {
+    .compare-bar {
+      flex-direction: column;
+      align-items: center;
+      padding: 0.5rem 1vw 0.7rem 1vw;
+      font-size: 0.95rem;
+    }
+    .compare-bar-list {
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      justify-content: flex-start;
+      width: 100%;
+      overflow-x: auto;
+    }
+    .compare-bar-item {
+      flex-direction: row;
+      align-items: center;
+      padding: 0.2rem 0.2rem 0.2rem 0.2rem;
+      margin-right: 0.2rem;
+      min-width: 0;
+      background: #fff;
+      color: #1a3c34;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      font-size: 0.9rem;
+    }
+    .compare-bar-img {
+      width: 38px;
+      height: 28px;
+      margin: 0 0.3rem 0 0;
+    }
+    .compare-bar-title {
+      font-size: 0.85rem;
+      max-width: 60px;
+      display: block;
+    }
+    .compare-bar-separator{
+      display: flex;
+      align-items: center;
+      width: 60vw;
+      justify-content: space-between;
+      margin-top: 1rem;
+    }
+    .compare-bar-remove {
+      font-size: 1rem;
+      display: block;
+    }
+    .compare-bar-actions-row {
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+      width: 100%;
+      margin-top: 0.2rem;
+    }
+    .compare-bar-btn, .compare-bar-clear {
+      width: 120px;
+      margin: 0;
+      font-size: 1rem;
+      padding: 0.3rem 0;
+    }
+  }

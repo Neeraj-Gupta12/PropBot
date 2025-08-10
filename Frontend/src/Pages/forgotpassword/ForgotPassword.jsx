@@ -56,14 +56,14 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="login-page">
-      <div className="image-container">
+    <div className="forgot-password-page">
+      <div className="forgot-image-container">
         <img src={forgotPasswordImage} alt="Forgot Password" />
       </div>
-      <div className="form-container">
+      <div className="forgot-form-container">
         <h2>Reset Password</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
+        <form className="forgot-form" onSubmit={handleSubmit}>
+          <div className="forgot-form-group">
             <label htmlFor="email">Email:</label>
             <input
               type="email"
@@ -73,7 +73,7 @@ const ForgotPassword = () => {
               required
             />
           </div>
-          <div className="form-group">
+          <div className="forgot-form-group">
             <label htmlFor="new-password">New Password:</label>
             <input
               type="password"
@@ -83,7 +83,7 @@ const ForgotPassword = () => {
               required
             />
           </div>
-          <div className="form-group">
+          <div className="forgot-form-group">
             <label htmlFor="confirm-password">Confirm Password:</label>
             <input
               type="password"
@@ -93,7 +93,7 @@ const ForgotPassword = () => {
               required
             />
           </div>
-          <button type="submit" disabled={isLoading}>
+          <button className="forgot-button" type="submit" disabled={isLoading}>
             {isLoading ? "Resetting..." : "Reset Password"}
           </button>
         </form>

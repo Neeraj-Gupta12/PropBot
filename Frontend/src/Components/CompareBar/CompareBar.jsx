@@ -15,21 +15,23 @@ const CompareBar = () => {
     <div className="compare-bar">
       <div className="compare-bar-list">
         {compareList.map((property) => (
-          <div className="compare-bar-item" key={property._id}>
+          <div className="compare-bar-item" key={property.id || property._id}>
             <img src={property.image} alt={property.title} className="compare-bar-img" />
             <div className="compare-bar-title">{property.title}</div>
-            <button className="compare-bar-remove" onClick={() => dispatch(removeFromCompare(property._id))}>×</button>
+            <button className="compare-bar-remove" onClick={() => dispatch(removeFromCompare(property.id))}>×</button>
           </div>
         ))}
       </div>
-      <button
-        className="compare-bar-btn"
-        disabled={compareList.length < 2}
-        onClick={() => navigate("/compare")}
-      >
+      <div className="compare-bar-separator">
+        <button
+          className="compare-bar-btn"
+          disabled={compareList.length < 2}
+          onClick={() => navigate("/compare")}
+        >
         Compare ({compareList.length})
-      </button>
-      <button className="compare-bar-clear" onClick={() => dispatch(clearCompare())}>Clear All</button>
+        </button>
+        <button className="compare-bar-clear" onClick={() => dispatch(clearCompare())}>Clear All</button>
+      </div>
     </div>
   );
 };

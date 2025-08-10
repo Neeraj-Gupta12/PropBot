@@ -1,3 +1,169 @@
+/* Responsive styles for SavedProperties */
+.saved-properties-page {
+  padding: 2rem 4vw;
+  font-size: 1.1rem;
+}
+.saved-properties-title {
+  font-size: 2.2rem;
+}
+.saved-properties-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.saved-properties-back-btn {
+  font-size: 1rem;
+  padding: 0.5rem 1.2rem;
+}
+.saved-properties-count {
+  margin: 1rem 0 2rem 0;
+  font-size: 1.1rem;
+}
+.saved-properties-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+.saved-properties-card {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+  cursor: pointer;
+}
+.saved-properties-card:hover {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+}
+.saved-properties-image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+}
+.saved-properties-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.saved-properties-info {
+  padding: 1rem 1.2rem 1.2rem 1.2rem;
+}
+.saved-properties-wishlist-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.saved-properties-wishlist-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: #e74c3c;
+  transition: color 0.2s;
+}
+.saved-properties-wishlist-btn.active {
+  color: #e74c3c;
+}
+.saved-properties-location {
+  color: #408de4;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.saved-properties-details {
+  font-size: 0.98rem;
+  color: #555;
+  margin-bottom: 0.7rem;
+}
+.saved-properties-price {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.saved-properties-priceval {
+  color: #1a3c34;
+  font-size: 1.2rem;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .saved-properties-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    justify-items: center;
+  }
+  .saved-properties-card {
+    min-width: 180px;
+    max-width: 99vw;
+  }
+  .saved-properties-image-wrapper {
+    height: 280px;
+  }
+  .saved-properties-info {
+    padding: 0.7rem 0.5rem 0.8rem 0.5rem;
+  }
+  .saved-properties-type-badge {
+    font-size: 0.8rem;
+    padding: 2px 7px;
+  }
+  .saved-properties-details {
+    font-size: 0.9rem;
+  }
+  .saved-properties-price {
+    font-size: 1rem;
+  }
+  .saved-properties-priceval {
+    font-size: 1.05rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+  .saved-properties-page {
+    padding: 1rem 2vw;
+    font-size: 1rem;
+  }
+  .saved-properties-title {
+    font-size: 1.2rem;
+  }
+  .saved-properties-header-row {
+    flex-direction: column;
+    gap: 0.7rem;
+    align-items: flex-start;
+  }
+  .saved-properties-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    justify-items: center;
+  }
+  .saved-properties-card {
+    min-width: 180px;
+    max-width: 99vw;
+  }
+  .saved-properties-image-wrapper {
+    height: 220px;
+  }
+  .saved-properties-info {
+    padding: 0.7rem 0.5rem 0.8rem 0.5rem;
+  }
+  .saved-properties-type-badge {
+    font-size: 0.8rem;
+    padding: 2px 7px;
+  }
+  .saved-properties-details {
+    font-size: 0.9rem;
+  }
+  .saved-properties-price {
+    font-size: 1rem;
+  }
+  .saved-properties-priceval {
+    font-size: 1.05rem;
+  }
+}
 .saved-properties-page {
   padding: 2rem;
 }
@@ -184,6 +350,6 @@
     border-radius: 8px;
   }
   .saved-properties-image-wrapper {
-    height: 70px;
+    height: 280px;
   }
 }

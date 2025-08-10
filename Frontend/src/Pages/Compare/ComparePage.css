@@ -1,7 +1,70 @@
+/* Responsive styles for ComparePage */
+.compare-page {
+  padding: 2rem 4vw;
+}
+.compare-table-wrapper {
+  overflow-x: auto;
+}
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.1rem;
+}
+.compare-table th, .compare-table td {
+  border: 1px solid #e0e0e0;
+  padding: 0.7rem 0.5rem;
+  text-align: center;
+}
+.compare-img {
+  width: 90px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+.compare-amenity {
+  display: inline-block;
+  background: #f0f0f0;
+  color: #1a3c34;
+  border-radius: 0.5rem;
+  padding: 0.2rem 0.7rem;
+  margin: 0.1rem 0.2rem;
+  font-size: 0.95rem;
+}
+@media (max-width: 1024px) {
+  .compare-page {
+    padding: 1.2rem 2vw;
+  }
+  .compare-table {
+    font-size: 1rem;
+  }
+  .compare-img {
+    width: 70px;
+    height: 55px;
+  }
+}
+@media (max-width: 700px) {
+  .compare-page {
+    padding: 0.5rem 1vw;
+  }
+  .compare-table {
+    font-size: 0.9rem;
+  }
+  .compare-img {
+    width: 50px;
+    height: 40px;
+  }
+  .compare-amenity {
+    font-size: 0.8rem;
+    padding: 0.1rem 0.4rem;
+  }
+}
 .compare-page {
   padding: 32px 16px;
   min-height: 80vh;
   background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .compare-table-wrapper {
   overflow-x: auto;
@@ -10,6 +73,7 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   padding: 24px;
   margin-top: 24px;
+  width: 90vw;
 }
 .compare-table {
   width: 100%;

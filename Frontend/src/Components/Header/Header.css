@@ -1,4 +1,17 @@
-.slider-container {
+/* Responsive font size for Header chat messages */
+.header-message-text {
+  font-size: 1.05rem;
+}
+@media (max-width: 1024px) {
+  .header-message-text {
+    font-size: 0.99rem;
+  }
+}
+@media (max-width: 700px) {
+  .header-message-text {
+    font-size: 0.92rem;
+  }
+}.slider-container {
   width: 100%;
   margin-bottom: 8px;
 }
@@ -443,23 +456,6 @@
   background: #e6eaf0;
 }
 
-@media (max-width: 700px) {
-  .chatbot-chatbox {
-    max-width: 99vw;
-    padding: 10px 0 8px 0;
-  }
-  .chatbot-messages, .chatbot-predefined {
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-  .chatbot-messages {
-    max-height: 220px;
-  }
-  .chatbot-search-bar {
-    margin: 0 8px;
-  }
-}
-
 /* Filter popup styles */
 .chatbot-filter-popup {
   position: fixed;
@@ -535,4 +531,29 @@
 
 .filter-actions button:hover {
   opacity: 0.9;
+}
+@media (max-width: 700px) {
+  .chatbot-main-heading{
+    font-size: 1.2rem;
+  }
+  .chatbot-desc{
+    font-size: 0.8rem;
+  }
+  .chatbot-chatbox {
+    max-width: 90vw;
+    padding: 10px 0 8px 0;
+  }
+  .chatbot-messages, .chatbot-predefined {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .chatbot-messages {
+    max-height: 220px;
+  }
+  .chatbot-search-bar {
+    margin: 0 8px;
+  }
+  .chatbot-bubble{
+    font-size: 0.9rem;
+  }
 }
