@@ -1,14 +1,16 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import signupimg from "../../assets/Images/signup/img.png";
 import "./Signup.css";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { UserContext } from "../../Context/UserContext";
+import { setUser } from "../../redux/slices/userSlice";
 import { useRegisterUserMutation } from "../../redux/api/userAPI";
 
 const Signup = () => {
-  const { user, loginUser } = useContext(UserContext);
+  const user = useSelector((state) => state.user.user);
+  const dispatch = useDispatch();
   const [registerUser, { isLoading }] = useRegisterUserMutation();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -16,7 +18,7 @@ const Signup = () => {
     email: "",
     password: "",
     phone: "",
-    age:"",
+    age: "",
     photo: null,
   });
 
@@ -114,9 +116,8 @@ const Signup = () => {
       });
 
       console.log(res);
-      loginUser(res.user, res.token);
-      // isLoading(false);
-      navigate("/");
+  dispatch(setUser({ user: res.user, token: res.token }));
+  navigate("/");
     } catch (error) {
       console.error("SignUp Error:", error);
 
@@ -132,9 +133,9 @@ const Signup = () => {
 
   useEffect(() => {
     if (user) {
-      return navigate("/");
+      navigate("/", { replace: true });
     }
-  }, []);
+  }, [user, navigate]);
 
   return (
     <div className="main-signup">

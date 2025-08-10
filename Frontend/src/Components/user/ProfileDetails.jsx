@@ -148,21 +148,6 @@ const ProfileDetails = () => {
             Always on the lookout for the next adventure and unforgettable experiences.
           </p>
 
-          <div className="profile-stats">
-            <div className="stat-item">
-              <h3>5</h3>
-              <p>Bookings</p>
-            </div>
-            <div className="stat-item">
-              <h3>12</h3>
-              <p>Destinations</p>
-            </div>
-            <div className="stat-item">
-              <h3>8</h3>
-              <p>Reviews</p>
-            </div>
-          </div>
-
           <div className="profile-actions">
             <button
               className="follow-btn"

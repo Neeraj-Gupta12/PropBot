@@ -1,88 +1,138 @@
+/* User Profile Main Layout */
 .user-profile {
-  padding: 20px;
+  padding: 2.5rem 4vw;
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
-  height: 100%;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2.5rem;
+  min-height: 80vh;
+  background: #f8f7f7;
   width: 100%;
   box-sizing: border-box;
 }
 
 .navigation-strip {
-  height: 80vh;
+  min-height: 400px;
   display: flex;
   flex-direction: column;
-  justify-content:space-between;
-  background-color: #f4f4f4;
-  border-radius: 5px;
-  width: 15%;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  width: 220px;
+  padding: 2rem 1.2rem 1.2rem 1.2rem;
+  gap: 2rem;
 }
 
 .navigation-strip ul {
   display: flex;
   flex-direction: column;
   list-style: none;
-  padding: 10px;
+  padding: 0;
   margin: 0;
+  gap: 0.7rem;
 }
 
 .navigation-strip ul li {
-  padding: 10px;
+  padding: 0.7rem 1rem;
   border-radius: 10px;
   cursor: pointer;
+  font-size: 1.08rem;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
 }
-
 .navigation-strip ul li a {
   text-decoration: none;
-  color: #333;
-  font-weight: bold;
+  color: #1a3c34;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: color 0.2s;
 }
-
-.navigation-strip ul li:hover{
-  background-color: silver;
+.navigation-strip ul li:hover {
+  background: #eaf6f0;
 }
-
-.navigation-strip ul li.active{
-  background-color: gray;
-}
-
-.navigation-strip ul li a.active {
-  color: #007bff;
-  border-bottom: 2px solid #007bff;
+.navigation-strip ul li a.active,
+.navigation-strip ul li.active a {
+  color: #408de4;
+  border-bottom: 2px solid #408de4;
 }
 
 .logout-button {
-  background-color: #ff4d4d;
+  background: #e74c3c;
   border: none;
-  color: white;
-  padding: 10px 15px;
+  color: #fff;
+  padding: 0.7rem 1.5rem;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background 0.2s;
+  margin-top: 1.5rem;
+}
+.logout-button:hover {
+  background: #b71c1c;
 }
 
 .content {
-  background-color: #fff;
-  border-radius: 5px;
-  max-height: 80vh;
-  width: 75%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  border-radius: 16px;
+  min-height: 500px;
+  width: 900px;
+  box-shadow: 0 2px 32px rgba(0,0,0,0.07);
+  padding: 2.5rem 2rem 2rem 2rem;
+  margin-left: 0;
 }
 
-@media screen and (max-width:750px) {
-  .user-profile{
+@media (max-width: 1024px) {
+  .user-profile {
     flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.2rem 2vw;
   }
-  .navigation-strip{
+  .navigation-strip {
     flex-direction: row;
     width: 100%;
-    height: 100%;
-    margin-bottom: 20px;
+    min-height: unset;
+    padding: 1.2rem 0.5rem;
+    margin-bottom: 1.2rem;
+    gap: 1.2rem;
   }
-  .navigation-strip ul{
+  .navigation-strip ul {
     flex-direction: row;
+    gap: 0.5rem;
   }
-  .content{
+  .content {
     width: 100%;
+    min-width: unset;
+    padding: 1.2rem 0.5rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .user-profile {
+    padding: 0.5rem 1vw;
+    gap: 0.7rem;
+  }
+  .navigation-strip {
+    flex-direction: row;
+    width: 100%;
+    min-height: unset;
+    padding: 0.7rem 0.2rem;
+    margin-bottom: 0.7rem;
+    gap: 0.5rem;
+  }
+  .navigation-strip ul {
+    flex-direction: row;
+    gap: 0.2rem;
+  }
+  .navigation-strip ul li {
+    font-size: 0.97rem;
+    padding: 0.5rem 0.7rem;
+  }
+  .content {
+    width: 100%;
+    min-width: unset;
+    padding: 0.7rem 0.2rem;
   }
 }

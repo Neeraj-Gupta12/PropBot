@@ -105,7 +105,7 @@ const Login = () => {
   
   return (
     <div className="login-page">
-      <div className="image-container">
+      <div className="login-image-container">
         <img src={loginImage} alt="Login" />
       </div>
       <div className="login-form-container">

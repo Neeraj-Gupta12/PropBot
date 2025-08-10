@@ -147,7 +147,7 @@ const Navbar = () => {
       </div>
 
       {/* Navigation items row - always visible on Saved Properties, Property Detail, else only when scrolled */}
-      {(isScrolled || location.pathname === "/saved-properties" || location.pathname.startsWith("/property/")) && (
+      {(isScrolled || location.pathname === "/saved-properties" || location.pathname.startsWith("/property/") || location.pathname === "/compare") && (
         <div className="navbar-navigation">
           <h2 className="navbar-main-heading">Propbot: Your Real Estate Home Finder</h2>
         </div>

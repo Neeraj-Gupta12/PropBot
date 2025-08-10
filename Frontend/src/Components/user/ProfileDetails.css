@@ -1,158 +1,154 @@
-/* Page Container */
+/* Profile Page Container */
 .profile-page {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
-  height: 100%;
-  background-color: #f5f5f5;
+  align-items: flex-start;
+  min-height: 400px;
+  background: none;
 }
 
-/* Profile Container */
+/* Profile Card */
 .profile-container {
   display: flex;
-  background-color: white;
-  width: 600px;
-  border-radius: 15px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 32px rgba(0,0,0,0.07);
+  padding: 2.5rem 2rem;
+  gap: 2.5rem;
+  min-width: 320px;
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
 }
 
-/* Left Section (Image and Add Button) */
+/* Left: Profile Image */
 .profile-image-section {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40%;
+  width: 200px;
+  min-width: 120px;
   position: relative;
 }
-
 .image-container {
   position: relative;
 }
-
 .round-img {
-  width: 200px;
-  height: 200px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   object-fit: cover;
-  border: 5px solid #ddd;
+  border: 4px solid #eaf6f0;
+  box-shadow: 0 2px 8px rgba(64, 141, 228, 0.08);
 }
-
-/* Add Button (Floating) */
 .add-btn {
   position: absolute;
-  bottom: 15px;
+  bottom: 10px;
   right: -10px;
-  background-color: #4caf50;
-  color: white;
+  background: #408de4;
+  color: #fff;
   border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 20px;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(64, 141, 228, 0.13);
+  transition: background 0.2s;
 }
-
 .add-btn:hover {
-  background-color: #333;
+  background: #1a3c34;
 }
 
-/* Right Section (User Info) */
+/* Right: Info */
 .profile-info-section {
-  padding-left: 20px;
-  width: 60%;
+  flex: 1;
+  padding-left: 0.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 0.7rem;
 }
-
-/* Name and Role */
 .profile-name {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a3c34;
+  margin-bottom: 0.2rem;
 }
 .profile-role {
-  font-size: 16px;
-  color: #777;
-  margin-bottom: 20px;
+  font-size: 1.05rem;
+  color: #408de4;
+  margin-bottom: 0.7rem;
 }
-
-/* Bio */
 .profile-bio {
-  font-size: 14px;
+  font-size: 0.98rem;
   color: #555;
-  margin-bottom: 20px;
+  margin-bottom: 0.7rem;
 }
-
-/* Stats Section */
-.profile-stats {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-.stat-item h3 {
-  font-size: 20px;
-  margin-bottom: 5px;
-}
-.stat-item p {
-  font-size: 14px;
-  color: #777;
-}
-
-/* Buttons */
 .profile-actions {
   display: flex;
-  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.2rem;
 }
-.follow-btn,
-.message-btn {
-  background-color: #4caf50;
+.follow-btn {
+  background: #4dbdd6;
   border: none;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 25px;
+  color: #fff;
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: background 0.2s;
 }
-.message-btn {
-  background-color: #008cba;
-}
-.follow-btn:hover,
-.message-btn:hover {
-  background-color: #333;
-  color: white;
+.follow-btn:hover {
+  background: #1a3c34;
 }
 
-.modal-content{
+/* Modal Styles */
+.modal-content {
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  height: 35%;
+  gap: 1rem;
+  padding: 1.2rem 0.7rem;
 }
-.modal-content input{
-  height: 30px;
+.modal-content input {
+  height: 36px;
   outline: none;
   border-radius: 8px;
-  border: none;
+  border: 1px solid #e0e0e0;
+  padding: 0 0.7rem;
+  font-size: 1rem;
 }
-.modal-content > div{
+.modal-content > div {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 0.7rem;
   margin-top: 10px;
 }
 
-@media screen and (max-width:600px) {
-  .profile-container{
+@media (max-width: 900px) {
+  .profile-container {
     flex-direction: column;
     align-items: center;
+    gap: 1.2rem;
+    padding: 1.2rem 0.7rem;
+    max-width: 99vw;
   }
-  .profile-info-section{
+  .profile-info-section {
     width: 100%;
-    padding: 0%;
+    padding: 0;
+    align-items: center;
+    text-align: center;
+  }
+  .profile-image-section {
+    width: 100%;
+    min-width: unset;
+    justify-content: center;
   }
 }

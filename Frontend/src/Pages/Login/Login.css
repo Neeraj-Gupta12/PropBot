@@ -5,7 +5,7 @@
   align-items: center;
 }
 
-.image-container {
+.login-image-container {
   width: 100%;
   flex: 0.6;
   display: flex;
@@ -13,7 +13,7 @@
   justify-content: center;
 }
 
-.image-container img {
+.login-image-container img {
   max-width: 100%;
   height: auto;
 }
